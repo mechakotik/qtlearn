@@ -13,24 +13,6 @@ ApplicationWindow {
 
     Reviser { id: reviser }
 
-    header: ToolBar {
-        RowLayout {
-            anchors.fill: parent
-            anchors.leftMargin: 15
-            Label {
-                text: "Новый файл"
-                font.bold: true
-                horizontalAlignment: Qt.AlignHLeft
-                verticalAlignment: Qt.AlignVCenter
-                Layout.fillWidth: true
-            }
-            ToolButton {
-                icon.source: "/res/close.svg"
-                onClicked: Qt.callLater(Qt.quit)
-            }
-        }
-    }
-
     ColumnLayout {
         anchors.fill: parent
         anchors.leftMargin: 15
