@@ -1,15 +1,23 @@
-#include <iostream>
 #include <sound.hpp>
 
-void amb::Sound::play() {
-    player = new QMediaPlayer;
-    output = new QAudioOutput;
+amb::Sound::Sound(QObject* parent) : QObject(parent) {
+    player = new QMediaPlayer(this);
+    output = new QAudioOutput(this);
     player->setAudioOutput(output);
+    connect(this, &amb::Sound::volumeChanged, this, &amb::Sound::updateVolume);
+}
 
-    player->setSource(QUrl::fromLocalFile("/data/qtlearn/labs/basics/ambiance/res/sounds/rain.ogg"));
+void amb::Sound::play() {
+    player->setSource(path);
     player->setLoops(QMediaPlayer::Infinite);
-    output->setVolume(1);
+    output->setVolume(static_cast<float>(volume));
     player->play();
+}
 
-    std::cerr << path.toString().toStdString() << ' ' << player->isPlaying() << std::endl;
+void amb::Sound::stop() {
+    player->stop();
+}
+
+void amb::Sound::updateVolume() {
+    output->setVolume(static_cast<float>(volume));
 }

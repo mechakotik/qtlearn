@@ -17,7 +17,12 @@ class amb::Sound : public QObject {
     Q_PROPERTY(double volume MEMBER volume NOTIFY volumeChanged)
 
 public:
+    Sound(QObject* parent = nullptr);
     void play();
+    void stop();
+
+public slots:
+    void updateVolume();
 
 signals:
     void nameChanged();

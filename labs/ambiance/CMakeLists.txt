@@ -15,9 +15,9 @@ qt_add_executable(ambiance
 )
 
 qt_add_qml_module(ambiance
-    URI path
-    VERSION 1.0
-    QML_FILES qml/main.qml
+        URI path
+        VERSION 1.0
+        QML_FILES qml/main.qml
 )
 
 target_link_libraries(ambiance PRIVATE Qt6::Quick Qt6::Multimedia)

@@ -5,6 +5,7 @@ import QtQuick.Dialogs
 import Ambiance.Ambiance
 
 ApplicationWindow {
+    id: window
     title: "Ambiance"
     width: 500
     height: 600
@@ -34,28 +35,28 @@ ApplicationWindow {
 
     Menu {
         id: natureMenu
-        MenuItem { text: "Дождь"; onTriggered: ambiance.addSound("Дождь", "/res/sounds/rain.ogg") }
-        MenuItem { text: "Шторм"; onTriggered: ambiance.addSound("Шторм", "/res/sounds/storm.ogg") }
-        MenuItem { text: "Ветер"; onTriggered: ambiance.addSound("Ветер", "/res/sounds/wind.ogg") }
-        MenuItem { text: "Волны"; onTriggered: ambiance.addSound("Волны", "/res/sounds/waves.ogg") }
-        MenuItem { text: "Поток"; onTriggered: ambiance.addSound("Поток", "/res/sounds/stream.ogg") }
-        MenuItem { text: "Птицы"; onTriggered: ambiance.addSound("Птицы", "/res/sounds/birds.ogg") }
-        MenuItem { text: "Летняя ночь"; onTriggered: ambiance.addSound("Летняя ночь", "/res/sounds/summer-night.ogg") }
+        MenuItem { text: "Дождь"; onTriggered: ambiance.add("Дождь", "qrc:/res/sounds/rain.ogg") }
+        MenuItem { text: "Шторм"; onTriggered: ambiance.add("Шторм", "qrc:/res/sounds/storm.ogg") }
+        MenuItem { text: "Ветер"; onTriggered: ambiance.add("Ветер", "qrc:/res/sounds/wind.ogg") }
+        MenuItem { text: "Волны"; onTriggered: ambiance.add("Волны", "qrc:/res/sounds/waves.ogg") }
+        MenuItem { text: "Поток"; onTriggered: ambiance.add("Поток", "qrc:/res/sounds/stream.ogg") }
+        MenuItem { text: "Птицы"; onTriggered: ambiance.add("Птицы", "qrc:/res/sounds/birds.ogg") }
+        MenuItem { text: "Летняя ночь"; onTriggered: ambiance.add("Летняя ночь", "qrc:/res/sounds/summer-night.ogg") }
     }
 
     Menu {
         id: envMenu
-        /*MenuItem { text: "Поезд"; onTriggered: ambiance.addSound("Поезд", "/res/sounds/rain.ogg") }
-        MenuItem { text: "Лодка"; onTriggered: ambiance.addSound("Лодка", "/res/sounds/rain.ogg") }
-        MenuItem { text: "Город"; onTriggered: ambiance.addSound("Город", "/res/sounds/rain.ogg") }
-        MenuItem { text: "Кофейня"; onTriggered: ambiance.addSound("Дождь", "/res/sounds/rain.ogg") }
-        MenuItem { text: "Костёр"; onTriggered: ambiance.addSound("Дождь", "/res/sounds/rain.ogg") }*/
+        MenuItem { text: "Поезд"; onTriggered: ambiance.add("Поезд", "qrc:/res/sounds/train.ogg") }
+        MenuItem { text: "Лодка"; onTriggered: ambiance.add("Лодка", "qrc:/res/sounds/boat.ogg") }
+        MenuItem { text: "Город"; onTriggered: ambiance.add("Город", "qrc:/res/sounds/city.ogg") }
+        MenuItem { text: "Кофейня"; onTriggered: ambiance.add("Кофейня", "qrc:/res/sounds/coffee-shop.ogg") }
+        MenuItem { text: "Костёр"; onTriggered: ambiance.add("Костёр", "qrc:/res/sounds/fireplace.ogg") }
     }
 
     Menu {
         id: noiseMenu
-        MenuItem { text: "Розовый шум" }
-        MenuItem { text: "Белый шум" }
+        MenuItem { text: "Розовый шум"; onTriggered: ambiance.add("Розовый шум", "qrc:/res/sounds/pink-noise.ogg") }
+        MenuItem { text: "Белый шум"; onTriggered: ambiance.add("Белый шум", "qrc:/res/sounds/white-noise.ogg") }
     }
 
     header: ToolBar {
@@ -77,6 +78,7 @@ ApplicationWindow {
             }
             ToolButton {
                 icon.source: "/res/icons/cancel.svg"
+                onClicked: window.close()
             }
         }
     }
@@ -94,13 +96,16 @@ ApplicationWindow {
                 contentItem: RowLayout {
                     Label {
                         text: modelData.name
+                        rightPadding: 100 - contentWidth
                     }
                     Slider {
                         Layout.fillWidth: true
                         value: modelData.volume
+                        onMoved: modelData.volume = value
                     }
                     ToolButton {
                         icon.source: "/res/icons/delete.svg"
+                        onClicked: ambiance.remove(index)
                     }
                 }
             }

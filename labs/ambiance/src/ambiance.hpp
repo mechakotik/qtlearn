@@ -13,7 +13,8 @@ class amb::Ambiance : public QObject {
     Q_PROPERTY(QObjectList sounds MEMBER sounds NOTIFY soundsChanged)
 
 public:
-    Q_INVOKABLE void addSound(QString name, QUrl path);
+    Q_INVOKABLE void add(QString name, QUrl path);
+    Q_INVOKABLE void remove(int index);
 
 signals:
     void soundsChanged();
