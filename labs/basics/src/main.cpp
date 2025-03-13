@@ -1,6 +1,6 @@
 #include <QGuiApplication>
 #include <QQmlApplicationEngine>
-#include <reviser.hpp>
+#include "reviser.hpp"
 
 int main(int argc, char* argv[]) {
     QGuiApplication app(argc, argv);

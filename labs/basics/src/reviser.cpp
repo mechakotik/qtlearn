@@ -1,7 +1,7 @@
 #include <QVariant>
 #include <random>
-#include <reviser.hpp>
-#include <ticket.hpp>
+#include "reviser.hpp"
+#include "ticket.hpp"
 
 Reviser::Reviser() {
     gen = std::mt19937_64(std::chrono::high_resolution_clock::now().time_since_epoch().count());
