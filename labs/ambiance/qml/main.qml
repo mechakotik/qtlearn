@@ -184,8 +184,16 @@ ApplicationWindow {
 
                 Label { text: "Стиль" }
                 ComboBox {
-                    model: ambiance.styles
+                    id: styleBox
+                    model: ["Material", "Fluent", "Fusion", "По умолчанию", "Кастомный"]
                     Layout.fillWidth: true
+                }
+
+                Label { text: "Кастомный стиль" }
+                TextField {
+                    Layout.fillWidth: true
+                    enabled: styleBox.currentIndex === 4
+                    
                 }
 
                 Label { text: "Тема" }
