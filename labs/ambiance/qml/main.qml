@@ -13,6 +13,19 @@ ApplicationWindow {
 
     Ambiance { id: ambiance }
 
+    FileDialog {
+        id: fileDialog
+        title: "Please choose a file"
+        nameFilters: ["Звуки (*.wav *.mp3 *.ogg *.flac)", "Все файлы (*)"]
+        onAccepted: {
+            ambiance.addCustom(selectedFile)
+            visible = false
+        }
+        onRejected: {
+            visible = false
+        }
+    }
+
     Menu {
         id: menu
         MenuItem {
@@ -30,6 +43,7 @@ ApplicationWindow {
         MenuSeparator {}
         MenuItem {
             text: "Импорт"
+            onTriggered: fileDialog.open()
         }
     }
 
@@ -75,6 +89,7 @@ ApplicationWindow {
             }
             ToolButton {
                 icon.source: "/res/icons/settings.svg"
+                onClicked: stack.push(settingsView)
             }
             ToolButton {
                 icon.source: "/res/icons/cancel.svg"
@@ -83,34 +98,117 @@ ApplicationWindow {
         }
     }
 
-    ScrollView {
+    StackView {
+        id: stack
         anchors.fill: parent
-        ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
-        ScrollBar.vertical.policy: ScrollBar.AsNeeded
+        initialItem: mainView
 
-        ListView {
-            id: listView
-            model: ambiance.sounds
-            delegate: ItemDelegate {
-                width: ListView.view.width
-                contentItem: RowLayout {
-                    Label {
-                        text: modelData.name
-                        rightPadding: 100 - contentWidth
-                    }
-                    Slider {
-                        Layout.fillWidth: true
-                        value: modelData.volume
-                        onMoved: modelData.volume = value
-                    }
-                    ToolButton {
-                        icon.source: "/res/icons/delete.svg"
-                        onClicked: ambiance.remove(index)
+        pushEnter: Transition {
+            PropertyAnimation {
+                property: "opacity"
+                from: 0
+                to: 1
+                duration: 200
+            }
+        }
+        pushExit: Transition {
+            PropertyAnimation {
+                property: "opacity"
+                from: 1
+                to: 0
+                duration: 50
+            }
+        }
+        popEnter: Transition {
+            PropertyAnimation {
+                property: "opacity"
+                from: 0
+                to: 1
+                duration: 50
+            }
+        }
+        popExit: Transition {
+            PropertyAnimation {
+                property: "opacity"
+                from: 1
+                to: 0
+                duration: 50
+            }
+        }
+    }
+
+    Component {
+        id: mainView
+
+        ScrollView {
+            ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
+            ScrollBar.vertical.policy: ScrollBar.AsNeeded
+
+            ListView {
+                id: listView
+                model: ambiance.sounds
+                delegate: ItemDelegate {
+                    width: ListView.view.width
+                    contentItem: RowLayout {
+                        Label {
+                            text: modelData.name
+                            rightPadding: 100 - contentWidth
+                        }
+                        Slider {
+                            Layout.fillWidth: true
+                            value: modelData.volume
+                            onMoved: modelData.volume = value
+                        }
+                        ToolButton {
+                            icon.source: "/res/icons/delete.svg"
+                            onClicked: ambiance.remove(index)
+                        }
                     }
                 }
+                focus: true
+                clip: true
             }
-            focus: true
-            clip: true
+        }
+    }
+
+    Component {
+        id: settingsView
+
+        ColumnLayout {
+            GridLayout {
+                Layout.fillWidth: true
+                Layout.margins: 20
+                columns: 2
+                rowSpacing: 15
+                columnSpacing: 30
+
+                Label { text: "Стиль" }
+                ComboBox {
+                    model: ambiance.styles
+                    Layout.fillWidth: true
+                }
+
+                Label { text: "Тема" }
+                ComboBox {
+                    model: ["Светлая", "Тёмная"]
+                    Layout.fillWidth: true
+                }
+
+                Label { text: "Цвет акцента" }
+                ComboBox {
+                    model: ["default"]
+                    Layout.fillWidth: true
+                }
+
+                Label { text: "Рамка окна" }
+                CheckBox {
+                    Layout.alignment: Qt.AlignRight
+                }
+            }
+            Item {
+                Layout.fillWidth: true
+                Layout.fillHeight: true
+            }
         }
     }
 }

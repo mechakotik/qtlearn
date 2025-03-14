@@ -1,4 +1,4 @@
-#include <sound.hpp>
+#include "sound.hpp"
 
 amb::Sound::Sound(QObject* parent) : QObject(parent) {
     player = new QMediaPlayer(this);
