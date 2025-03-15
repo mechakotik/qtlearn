@@ -10,6 +10,7 @@ ApplicationWindow {
     width: 500
     height: 600
     visible: true
+    flags: Qt.FramelessWindowHint
 
     Ambiance { id: ambiance }
 
