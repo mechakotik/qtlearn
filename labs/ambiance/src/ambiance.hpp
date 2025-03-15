@@ -1,14 +1,14 @@
 #ifndef AMBIANCE_HPP
 #define AMBIANCE_HPP
 
-#include <QObject>
+#include <QQuickItem>
 #include <QUrl>
 
 namespace amb {
     class Ambiance;
 }
 
-class amb::Ambiance : public QObject {
+class amb::Ambiance : public QQuickItem {
     Q_OBJECT
     Q_PROPERTY(QObjectList sounds MEMBER sounds NOTIFY soundsChanged)
     Q_PROPERTY(int style MEMBER style NOTIFY styleChanged)
@@ -17,7 +17,7 @@ class amb::Ambiance : public QObject {
     Q_PROPERTY(bool windowBorder MEMBER windowBorder NOTIFY windowBorderChanged)
 
 public:
-    Ambiance(QObject* parent = nullptr);
+    Ambiance(QQuickItem* parent = nullptr);
     ~Ambiance();
 
     Q_INVOKABLE void add(QString name, QUrl path, double volume = 1);
@@ -30,6 +30,9 @@ signals:
     void customStyleChanged();
     void darkModeChanged();
     void windowBorderChanged();
+
+private slots:
+    void updateWindowBorder();
 
 private:
     void loadConfig();

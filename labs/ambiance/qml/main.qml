@@ -10,7 +10,6 @@ ApplicationWindow {
     width: 500
     height: 600
     visible: true
-    flags: Qt.FramelessWindowHint
 
     Ambiance { id: ambiance }
 
@@ -31,47 +30,51 @@ ApplicationWindow {
         id: menu
         MenuItem {
             text: "Природа"
+            hoverEnabled: true
             onTriggered: natureMenu.open()
         }
         MenuItem {
             text: "Окружение"
+            hoverEnabled: true
             onTriggered: envMenu.open()
         }
         MenuItem {
             text: "Шум"
+            hoverEnabled: true
             onTriggered: noiseMenu.open()
         }
         MenuSeparator {}
         MenuItem {
             text: "Импорт"
+            hoverEnabled: true
             onTriggered: fileDialog.open()
         }
     }
 
     Menu {
         id: natureMenu
-        MenuItem { text: "Дождь"; onTriggered: ambiance.add("Дождь", "qrc:/res/sounds/rain.ogg") }
-        MenuItem { text: "Шторм"; onTriggered: ambiance.add("Шторм", "qrc:/res/sounds/storm.ogg") }
-        MenuItem { text: "Ветер"; onTriggered: ambiance.add("Ветер", "qrc:/res/sounds/wind.ogg") }
-        MenuItem { text: "Волны"; onTriggered: ambiance.add("Волны", "qrc:/res/sounds/waves.ogg") }
-        MenuItem { text: "Поток"; onTriggered: ambiance.add("Поток", "qrc:/res/sounds/stream.ogg") }
-        MenuItem { text: "Птицы"; onTriggered: ambiance.add("Птицы", "qrc:/res/sounds/birds.ogg") }
-        MenuItem { text: "Летняя ночь"; onTriggered: ambiance.add("Летняя ночь", "qrc:/res/sounds/summer-night.ogg") }
+        MenuItem { text: "Дождь"; onTriggered: ambiance.add("Дождь", "qrc:/res/sounds/rain.ogg"); hoverEnabled: true }
+        MenuItem { text: "Шторм"; onTriggered: ambiance.add("Шторм", "qrc:/res/sounds/storm.ogg"); hoverEnabled: true }
+        MenuItem { text: "Ветер"; onTriggered: ambiance.add("Ветер", "qrc:/res/sounds/wind.ogg"); hoverEnabled: true }
+        MenuItem { text: "Волны"; onTriggered: ambiance.add("Волны", "qrc:/res/sounds/waves.ogg"); hoverEnabled: true }
+        MenuItem { text: "Поток"; onTriggered: ambiance.add("Поток", "qrc:/res/sounds/stream.ogg"); hoverEnabled: true }
+        MenuItem { text: "Птицы"; onTriggered: ambiance.add("Птицы", "qrc:/res/sounds/birds.ogg"); hoverEnabled: true }
+        MenuItem { text: "Летняя ночь"; onTriggered: ambiance.add("Летняя ночь", "qrc:/res/sounds/summer-night.ogg"); hoverEnabled: true }
     }
 
     Menu {
         id: envMenu
-        MenuItem { text: "Поезд"; onTriggered: ambiance.add("Поезд", "qrc:/res/sounds/train.ogg") }
-        MenuItem { text: "Лодка"; onTriggered: ambiance.add("Лодка", "qrc:/res/sounds/boat.ogg") }
-        MenuItem { text: "Город"; onTriggered: ambiance.add("Город", "qrc:/res/sounds/city.ogg") }
-        MenuItem { text: "Кофейня"; onTriggered: ambiance.add("Кофейня", "qrc:/res/sounds/coffee-shop.ogg") }
-        MenuItem { text: "Костёр"; onTriggered: ambiance.add("Костёр", "qrc:/res/sounds/fireplace.ogg") }
+        MenuItem { text: "Поезд"; onTriggered: ambiance.add("Поезд", "qrc:/res/sounds/train.ogg"); hoverEnabled: true }
+        MenuItem { text: "Лодка"; onTriggered: ambiance.add("Лодка", "qrc:/res/sounds/boat.ogg"); hoverEnabled: true }
+        MenuItem { text: "Город"; onTriggered: ambiance.add("Город", "qrc:/res/sounds/city.ogg"); hoverEnabled: true }
+        MenuItem { text: "Кофейня"; onTriggered: ambiance.add("Кофейня", "qrc:/res/sounds/coffee-shop.ogg"); hoverEnabled: true }
+        MenuItem { text: "Костёр"; onTriggered: ambiance.add("Костёр", "qrc:/res/sounds/fireplace.ogg"); hoverEnabled: true }
     }
 
     Menu {
         id: noiseMenu
-        MenuItem { text: "Розовый шум"; onTriggered: ambiance.add("Розовый шум", "qrc:/res/sounds/pink-noise.ogg") }
-        MenuItem { text: "Белый шум"; onTriggered: ambiance.add("Белый шум", "qrc:/res/sounds/white-noise.ogg") }
+        MenuItem { text: "Розовый шум"; onTriggered: ambiance.add("Розовый шум", "qrc:/res/sounds/pink-noise.ogg"); hoverEnabled: true }
+        MenuItem { text: "Белый шум"; onTriggered: ambiance.add("Белый шум", "qrc:/res/sounds/white-noise.ogg"); hoverEnabled: true }
     }
 
     header: ToolBar {
@@ -86,11 +89,13 @@ ApplicationWindow {
                 icon.source: "/res/icons/add_box.svg"
                 onClicked: menu.open()
                 visible: stack.depth === 1
+                hoverEnabled: true
             }
             ToolButton {
                 icon.source: "/res/icons/back.svg"
                 onClicked: stack.pop()
                 visible: stack.depth === 2
+                hoverEnabled: true
             }
             Label {
                 text: (stack.depth === 1 ? "Ambiance" : "Настройки")
@@ -103,10 +108,12 @@ ApplicationWindow {
                 icon.source: "/res/icons/settings.svg"
                 onClicked: stack.push(settingsView)
                 visible: stack.depth === 1
+                hoverEnabled: true
             }
             ToolButton {
                 icon.source: "/res/icons/cancel.svg"
                 onClicked: window.close()
+                hoverEnabled: true
             }
         }
     }
@@ -171,10 +178,12 @@ ApplicationWindow {
                             Layout.fillWidth: true
                             value: modelData.volume
                             onMoved: modelData.volume = value
+                            hoverEnabled: true
                         }
                         ToolButton {
                             icon.source: "/res/icons/delete.svg"
                             onClicked: ambiance.remove(index)
+                            hoverEnabled: true
                         }
                     }
                 }
@@ -202,6 +211,7 @@ ApplicationWindow {
                     currentIndex: ambiance.style
                     onActivated: ambiance.style = currentIndex
                     Layout.fillWidth: true
+                    hoverEnabled: true
                 }
 
                 Label {
@@ -213,6 +223,7 @@ ApplicationWindow {
                     enabled: styleBox.currentIndex === 4
                     text: ambiance.customStyle
                     onEditingFinished: ambiance.customStyle = text
+                    hoverEnabled: true
                 }
 
                 /*Label { text: "Цвет акцента" }
@@ -226,6 +237,7 @@ ApplicationWindow {
                     Layout.alignment: Qt.AlignRight
                     checked: ambiance.darkMode
                     onCheckedChanged: ambiance.darkMode = checked
+                    hoverEnabled: true
                 }
 
                 Label { text: "Рамка окна" }
@@ -233,6 +245,7 @@ ApplicationWindow {
                     Layout.alignment: Qt.AlignRight
                     checked: ambiance.windowBorder
                     onCheckedChanged: ambiance.windowBorder = checked
+                    hoverEnabled: true
                 }
             }
             Item {
