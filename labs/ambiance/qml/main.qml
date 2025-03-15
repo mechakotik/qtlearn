@@ -9,7 +9,7 @@ ApplicationWindow {
     id: window
     title: "Ambiance"
     width: 500
-    height: 600
+    height: 500
     visible: true
 
     Ambiance { id: ambiance }
@@ -128,7 +128,7 @@ ApplicationWindow {
     header: ToolBar {
         DragHandler {
             acceptedDevices: PointerDevice.GenericPointer
-            grabPermissions:  PointerHandler.CanTakeOverFromItems | PointerHandler.CanTakeOverFromHandlersOfDifferentType | PointerHandler.ApprovesTakeOverByAnything
+            grabPermissions: PointerHandler.CanTakeOverFromItems | PointerHandler.CanTakeOverFromHandlersOfDifferentType | PointerHandler.ApprovesTakeOverByAnything
             onActiveChanged: if (active) window.startSystemMove()
         }
         ToolButton {
@@ -236,17 +236,26 @@ ApplicationWindow {
                         Label {
                             text: modelData.name
                             rightPadding: 100 - contentWidth
+                            elide: Text.ElideRight
                         }
                         Slider {
                             Layout.fillWidth: true
                             value: modelData.volume
                             onMoved: modelData.volume = value
+                            visible: modelData.loaded
                             hoverEnabled: true
                         }
                         ToolButton {
+                            id: deleteButton
                             icon.source: "/res/icons/delete.svg"
                             onClicked: ambiance.remove(index)
+                            visible: modelData.loaded
                             hoverEnabled: true
+                        }
+                        ProgressBar {
+                            Layout.fillWidth: true
+                            indeterminate: true
+                            visible: !modelData.loaded
                         }
                     }
                 }

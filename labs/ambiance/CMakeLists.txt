@@ -15,6 +15,7 @@ qt_add_executable(ambiance
         src/main.cpp
         src/ambiance.cpp
         src/sound.cpp
+        src/player_loader.cpp
 )
 
 qt_add_qml_module(ambiance
