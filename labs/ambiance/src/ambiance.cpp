@@ -1,7 +1,7 @@
 #include <QVariant>
 #include <QUrl>
 #include <QQuickStyle>
-#include <QQuickWindow>s
+#include <QQuickWindow>
 #include <toml.hpp>
 #include "ambiance.hpp"
 #include "sound.hpp"
@@ -9,6 +9,7 @@
 amb::Ambiance::Ambiance(QQuickItem* parent) : QQuickItem(parent) {
     connect(this, &amb::Ambiance::windowBorderChanged, this, &amb::Ambiance::updateWindowBorder);
     connect(this, &amb::Ambiance::windowChanged, this, &amb::Ambiance::updateWindowBorder);
+
     try {
         loadConfig();
     } catch(std::exception& e) {
@@ -30,14 +31,9 @@ void amb::Ambiance::loadConfig() {
         add(sound.at("name").as_string().c_str(), QUrl(sound.at("path").as_string().c_str(), QUrl::StrictMode), sound.at("volume").as_floating());
     }
 
-    style = configTable.at("settings").at("style").as_integer();
-    customStyle = configTable.at("settings").at("customStyle").as_string().c_str();
-    darkMode = configTable.at("settings").at("darkMode").as_boolean();
-    windowBorder = configTable.at("settings").at("windowBorder").as_boolean();
-
-    emit styleChanged();
-    emit customStyleChanged();
-    emit darkModeChanged();
+    theme = configTable.at("settings").at("theme").as_integer();
+    windowBorder = configTable.at("settings").at("window_border").as_boolean();
+    emit themeChanged();
     emit windowBorderChanged();
 }
 
@@ -60,10 +56,8 @@ void amb::Ambiance::saveConfig() {
     }
 
     toml::table settingsTable;
-    settingsTable["style"] = style;
-    settingsTable["customStyle"] = customStyle.toStdString();
-    settingsTable["darkMode"] = darkMode;
-    settingsTable["windowBorder"] = windowBorder;
+    settingsTable["theme"] = theme;
+    settingsTable["window_border"] = windowBorder;
     configTable["settings"] = settingsTable;
 
     std::ofstream fout("config.toml");

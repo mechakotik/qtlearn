@@ -11,9 +11,8 @@ namespace amb {
 class amb::Ambiance : public QQuickItem {
     Q_OBJECT
     Q_PROPERTY(QObjectList sounds MEMBER sounds NOTIFY soundsChanged)
-    Q_PROPERTY(int style MEMBER style NOTIFY styleChanged)
-    Q_PROPERTY(QString customStyle MEMBER customStyle NOTIFY customStyleChanged)
-    Q_PROPERTY(bool darkMode MEMBER darkMode NOTIFY darkModeChanged)
+    Q_PROPERTY(int theme MEMBER theme NOTIFY themeChanged)
+    Q_PROPERTY(int accent MEMBER accent NOTIFY accentChanged)
     Q_PROPERTY(bool windowBorder MEMBER windowBorder NOTIFY windowBorderChanged)
 
 public:
@@ -26,9 +25,8 @@ public:
 
 signals:
     void soundsChanged();
-    void styleChanged();
-    void customStyleChanged();
-    void darkModeChanged();
+    void themeChanged();
+    void accentChanged();
     void windowBorderChanged();
 
 private slots:
@@ -39,9 +37,8 @@ private:
     void saveConfig();
 
     QObjectList sounds;
-    int style = 0;
-    QString customStyle;
-    bool darkMode = true;
+    int theme = 0;
+    int accent = 0;
     bool windowBorder = false;
 };
 

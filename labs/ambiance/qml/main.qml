@@ -1,7 +1,8 @@
 import QtQuick
 import QtQuick.Layouts
-import QtQuick.Controls
 import QtQuick.Dialogs
+import QtQuick.Controls
+import QtQuick.Controls.Material
 import Ambiance.Ambiance
 
 ApplicationWindow {
@@ -12,6 +13,53 @@ ApplicationWindow {
     visible: true
 
     Ambiance { id: ambiance }
+
+    function getAccent() {
+        switch(ambiance.accent) {
+            case 0:
+                return Material.Red
+            case 1:
+                return Material.Pink
+            case 2:
+                return Material.Purple
+            case 3:
+                return Material.DeepPurple
+            case 4:
+                return Material.Indigo
+            case 5:
+                return Material.Blue
+            case 6:
+                return Material.LightBlue
+            case 7:
+                return Material.Cyan
+            case 8:
+                return Material.Teal
+            case 9:
+                return Material.Green
+            case 10:
+                return Material.LightGreen
+            case 11:
+                return Material.Lime
+            case 12:
+                return Material.Yellow
+            case 13:
+                return Material.Amber
+            case 14:
+                return Material.Orange
+            case 15:
+                return Material.DeepOrange
+            case 16:
+                return Material.Brown
+            case 17:
+                return Material.Grey
+            case 18:
+                return Material.BlueGrey
+        }
+    }
+
+    Material.theme: (ambiance.theme === 0 ? Material.System : (ambiance.theme === 1 ? Material.Light : Material.Dark))
+    Material.primary: (Material.theme === Material.Dark ? "#3f3c40" : "#dfdce0")
+    Material.accent: getAccent()
 
     FileDialog {
         id: fileDialog
@@ -204,42 +252,44 @@ ApplicationWindow {
                 rowSpacing: 15
                 columnSpacing: 30
 
-                Label { text: "Стиль" }
+                Label { text: "Тема" }
                 ComboBox {
-                    id: styleBox
-                    model: ["Material", "Fluent", "Fusion", "По умолчанию", "Кастомный"]
-                    currentIndex: ambiance.style
-                    onActivated: ambiance.style = currentIndex
+                    model: ["Системная", "Светлая", "Тёмная"]
+                    currentIndex: ambiance.theme
+                    onActivated: ambiance.theme = currentIndex
                     Layout.fillWidth: true
                     hoverEnabled: true
                 }
 
-                Label {
-                    text: "Кастомный стиль"
-                    enabled: styleBox.currentIndex === 4
-                }
-                TextField {
-                    Layout.fillWidth: true
-                    enabled: styleBox.currentIndex === 4
-                    text: ambiance.customStyle
-                    onEditingFinished: ambiance.customStyle = text
-                    hoverEnabled: true
-                }
-
-                /*Label { text: "Цвет акцента" }
+                Label { text: "Цвет акцента" }
                 ComboBox {
-                    model: ["default"]
+                    model: [
+                        "Красный",
+                        "Розовый",
+                        "Фиолетовый",
+                        "Тёмно-фиолетовый",
+                        "Индиго",
+                        "Синий",
+                        "Светло-синий",
+                        "Голубой",
+                        "Бирюзовый",
+                        "Зелёный",
+                        "Светло-зелёный",
+                        "Лаймовый",
+                        "Жёлтый",
+                        "Янтарный",
+                        "Оранжевый",
+                        "Тёмно-оранжевый",
+                        "Коричневый",
+                        "Серый",
+                        "Сине-серый"
+                    ]
                     Layout.fillWidth: true
-                }*/
-
-                Label { text: "Тёмная тема" }
-                CheckBox {
-                    Layout.alignment: Qt.AlignRight
-                    checked: ambiance.darkMode
-                    onCheckedChanged: ambiance.darkMode = checked
+                    currentIndex: ambiance.accent
+                    onActivated: ambiance.accent = currentIndex
                     hoverEnabled: true
                 }
-
+                
                 Label { text: "Рамка окна" }
                 CheckBox {
                     Layout.alignment: Qt.AlignRight
