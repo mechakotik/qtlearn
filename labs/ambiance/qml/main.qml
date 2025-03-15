@@ -159,8 +159,15 @@ ApplicationWindow {
                 hoverEnabled: true
             }
             ToolButton {
-                icon.source: "/res/icons/cancel.svg"
+                icon.source: "/res/icons/hide.svg"
+                onClicked: window.showMinimized()
+                visible: !ambiance.windowBorder
+                hoverEnabled: true
+            }
+            ToolButton {
+                icon.source: "/res/icons/close.svg"
                 onClicked: window.close()
+                visible: !ambiance.windowBorder
                 hoverEnabled: true
             }
         }
