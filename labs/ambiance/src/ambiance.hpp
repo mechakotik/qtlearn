@@ -14,6 +14,7 @@ class amb::Ambiance : public QQuickItem {
     Q_PROPERTY(int theme MEMBER theme NOTIFY themeChanged)
     Q_PROPERTY(int accent MEMBER accent NOTIFY accentChanged)
     Q_PROPERTY(bool windowBorder MEMBER windowBorder NOTIFY windowBorderChanged)
+    Q_PROPERTY(bool controls MEMBER controls NOTIFY controlsChanged)
 
 public:
     Ambiance(QQuickItem* parent = nullptr);
@@ -28,6 +29,7 @@ signals:
     void themeChanged();
     void accentChanged();
     void windowBorderChanged();
+    void controlsChanged();
 
 private slots:
     void updateWindowBorder();
@@ -40,6 +42,7 @@ private:
     int theme = 0;
     int accent = 0;
     bool windowBorder = false;
+    bool controls = true;
 };
 
 #endif // AMBIANCE_HPP

@@ -158,14 +158,14 @@ ApplicationWindow {
             onClicked: stack.push(settingsView)
             visible: stack.depth === 1
             hoverEnabled: true
-            anchors.right: hideButton.left
+            anchors.right: (ambiance.controls ? hideButton.left : parent.right)
             anchors.verticalCenter: parent.verticalCenter
         }
         ToolButton {
             id: hideButton
             icon.source: "/res/icons/hide.svg"
             onClicked: window.showMinimized()
-            visible: !ambiance.windowBorder
+            visible: ambiance.controls
             hoverEnabled: true
             anchors.right: closeButton.left
             anchors.verticalCenter: parent.verticalCenter
@@ -174,7 +174,7 @@ ApplicationWindow {
             id: closeButton
             icon.source: "/res/icons/close.svg"
             onClicked: window.close()
-            visible: !ambiance.windowBorder
+            visible: ambiance.controls
             hoverEnabled: true
             anchors.right: parent.right
             anchors.verticalCenter: parent.verticalCenter
@@ -310,6 +310,14 @@ ApplicationWindow {
                     Layout.alignment: Qt.AlignRight
                     checked: ambiance.windowBorder
                     onCheckedChanged: ambiance.windowBorder = checked
+                    hoverEnabled: true
+                }
+
+                Label { text: "Элементы управления" }
+                CheckBox {
+                    Layout.alignment: Qt.AlignRight
+                    checked: ambiance.controls
+                    onCheckedChanged: ambiance.controls = checked
                     hoverEnabled: true
                 }
             }

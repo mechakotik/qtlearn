@@ -32,7 +32,9 @@ void amb::Ambiance::loadConfig() {
     }
 
     theme = configTable.at("settings").at("theme").as_integer();
+    accent = configTable.at("settings").at("accent").as_integer();
     windowBorder = configTable.at("settings").at("window_border").as_boolean();
+    controls = configTable.at("settings").at("controls").as_boolean();
     emit themeChanged();
     emit windowBorderChanged();
 }
@@ -57,7 +59,9 @@ void amb::Ambiance::saveConfig() {
 
     toml::table settingsTable;
     settingsTable["theme"] = theme;
+    settingsTable["accent"] = accent;
     settingsTable["window_border"] = windowBorder;
+    settingsTable["controls"] = controls;
     configTable["settings"] = settingsTable;
 
     std::ofstream fout("config.toml");
