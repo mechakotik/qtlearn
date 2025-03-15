@@ -41,7 +41,10 @@ void amb::Ambiance::loadConfig() {
 
 void amb::Ambiance::updateWindowBorder() {
     if(window() != nullptr) {
-        window()->setProperty("flags", (windowBorder ? 0 : Qt::FramelessWindowHint));
+        int flags = window()->property("flags").toInt();
+        if(windowBorder) flags &= ~Qt::FramelessWindowHint;
+        else flags |= Qt::FramelessWindowHint;
+        window()->setProperty("flags", flags);
     }
 }
 
