@@ -126,50 +126,58 @@ ApplicationWindow {
     }
 
     header: ToolBar {
-        RowLayout {
-            anchors.fill: parent
-            DragHandler {
-                acceptedDevices: PointerDevice.GenericPointer
-                grabPermissions:  PointerHandler.CanTakeOverFromItems | PointerHandler.CanTakeOverFromHandlersOfDifferentType | PointerHandler.ApprovesTakeOverByAnything
-                onActiveChanged: if (active) window.startSystemMove()
-            }
-            ToolButton {
-                icon.source: "/res/icons/add_box.svg"
-                onClicked: menu.open()
-                visible: stack.depth === 1
-                hoverEnabled: true
-            }
-            ToolButton {
-                icon.source: "/res/icons/back.svg"
-                onClicked: stack.pop()
-                visible: stack.depth === 2
-                hoverEnabled: true
-            }
-            Label {
-                text: (stack.depth === 1 ? "Ambiance" : "Настройки")
-                font.bold: true
-                horizontalAlignment: Qt.AlignHCenter
-                verticalAlignment: Qt.AlignVCenter
-                Layout.fillWidth: true
-            }
-            ToolButton {
-                icon.source: "/res/icons/settings.svg"
-                onClicked: stack.push(settingsView)
-                visible: stack.depth === 1
-                hoverEnabled: true
-            }
-            ToolButton {
-                icon.source: "/res/icons/hide.svg"
-                onClicked: window.showMinimized()
-                visible: !ambiance.windowBorder
-                hoverEnabled: true
-            }
-            ToolButton {
-                icon.source: "/res/icons/close.svg"
-                onClicked: window.close()
-                visible: !ambiance.windowBorder
-                hoverEnabled: true
-            }
+        DragHandler {
+            acceptedDevices: PointerDevice.GenericPointer
+            grabPermissions:  PointerHandler.CanTakeOverFromItems | PointerHandler.CanTakeOverFromHandlersOfDifferentType | PointerHandler.ApprovesTakeOverByAnything
+            onActiveChanged: if (active) window.startSystemMove()
+        }
+        ToolButton {
+            icon.source: "/res/icons/add_box.svg"
+            onClicked: menu.open()
+            visible: stack.depth === 1
+            hoverEnabled: true
+            anchors.verticalCenter: parent.verticalCenter
+        }
+        ToolButton {
+            icon.source: "/res/icons/back.svg"
+            onClicked: stack.pop()
+            visible: stack.depth === 2
+            hoverEnabled: true
+            anchors.verticalCenter: parent.verticalCenter
+        }
+        Label {
+            text: (stack.depth === 1 ? "Ambiance" : "Настройки")
+            font.bold: true
+            horizontalAlignment: Qt.AlignHCenter
+            verticalAlignment: Qt.AlignVCenter
+            anchors.horizontalCenter: parent.horizontalCenter
+            anchors.verticalCenter: parent.verticalCenter
+        }
+        ToolButton {
+            icon.source: "/res/icons/settings.svg"
+            onClicked: stack.push(settingsView)
+            visible: stack.depth === 1
+            hoverEnabled: true
+            anchors.right: hideButton.left
+            anchors.verticalCenter: parent.verticalCenter
+        }
+        ToolButton {
+            id: hideButton
+            icon.source: "/res/icons/hide.svg"
+            onClicked: window.showMinimized()
+            visible: !ambiance.windowBorder
+            hoverEnabled: true
+            anchors.right: closeButton.left
+            anchors.verticalCenter: parent.verticalCenter
+        }
+        ToolButton {
+            id: closeButton
+            icon.source: "/res/icons/close.svg"
+            onClicked: window.close()
+            visible: !ambiance.windowBorder
+            hoverEnabled: true
+            anchors.right: parent.right
+            anchors.verticalCenter: parent.verticalCenter
         }
     }
 
