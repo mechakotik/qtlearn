@@ -5,6 +5,7 @@
         <file>res/icons/add_box.svg</file>
         <file>res/icons/settings.svg</file>
         <file>res/icons/cancel.svg</file>
+        <file>res/icons/back.svg</file>
         <file>res/sounds/rain.ogg</file>
         <file>res/sounds/storm.ogg</file>
         <file>res/sounds/wind.ogg</file>
