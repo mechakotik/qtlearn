@@ -263,6 +263,7 @@ ApplicationWindow {
                 model: ambiance.sounds
                 delegate: ItemDelegate {
                     width: ListView.view.width
+                    hoverEnabled: true
                     contentItem: RowLayout {
                         Label {
                             text: modelData.name
