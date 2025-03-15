@@ -200,12 +200,24 @@ ApplicationWindow {
                 to: 1
                 duration: 100
             }
+            PropertyAnimation {
+                property: "x"
+                from: 100
+                to: 0
+                duration: 100
+            }
         }
         pushExit: Transition {
             PropertyAnimation {
                 property: "opacity"
                 from: 1
                 to: 0
+                duration: 100
+            }
+            PropertyAnimation {
+                property: "x"
+                from: 0
+                to: -100
                 duration: 100
             }
         }
@@ -216,12 +228,24 @@ ApplicationWindow {
                 to: 1
                 duration: 100
             }
+            PropertyAnimation {
+                property: "x"
+                from: -100
+                to: 0
+                duration: 100
+            }
         }
         popExit: Transition {
             PropertyAnimation {
                 property: "opacity"
                 from: 1
                 to: 0
+                duration: 100
+            }
+            PropertyAnimation {
+                property: "x"
+                from: 0
+                to: 100
                 duration: 100
             }
         }
