@@ -36,6 +36,7 @@ ApplicationWindow {
                         id: itemDelegate
                         text: modelData.name
                         highlighted: ListView.isCurrentItem
+                        hoverEnabled: true
                         width: ListView.view.width
                         tristate: true
                         checkState: modelData.state
@@ -77,6 +78,7 @@ ApplicationWindow {
                     Layout.fillWidth: true
                     text: reviser.curName
                     onEditingFinished: reviser.curName = text
+                    hoverEnabled: true
                 }
                 Label {
                     text: "Статус"
@@ -86,6 +88,7 @@ ApplicationWindow {
                     currentIndex: reviser.curState
                     onActivated: reviser.curState = currentIndex
                     Layout.fillWidth: true
+                    hoverEnabled: true
                 }
             }
         }
@@ -104,6 +107,7 @@ ApplicationWindow {
                 Layout.preferredWidth: 60
                 onPressed: reviser.previous()
                 enabled: reviser.canPrevious
+                hoverEnabled: true
             }
             Button {
                 text: "УДАЛИТЬ"
@@ -111,12 +115,14 @@ ApplicationWindow {
                 Layout.preferredWidth: 60
                 onPressed: reviser.removeTicket()
                 enabled: reviser.canRemove
+                hoverEnabled: true
             }
             Button {
                 text: "ДОБАВИТЬ"
                 Layout.fillWidth: true
                 Layout.preferredWidth: 60
                 onPressed: reviser.addTicket()
+                hoverEnabled: true
             }
             Button {
                 text: "ВПЕРЁД"
@@ -124,6 +130,7 @@ ApplicationWindow {
                 Layout.preferredWidth: 60
                 onPressed: reviser.next()
                 enabled: reviser.canNext
+                hoverEnabled: true
             }
         }
     }
