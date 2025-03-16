@@ -73,6 +73,13 @@ void amb::Ambiance::saveConfig() {
 }
 
 void amb::Ambiance::add(QString name, QUrl path, double volume) {
+    for(QObject* object : sounds) {
+        Sound* sound = dynamic_cast<Sound*>(object);
+        if(sound->property("path").toUrl() == path) {
+            return;
+        }
+    }
+    
     Sound* sound = new Sound(this);
     sound->setProperty("name", name);
     sound->setProperty("path", path);
