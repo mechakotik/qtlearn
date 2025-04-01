@@ -13,6 +13,7 @@ void rc::Raycaster::paint(QPainter* painter) {
     QElapsedTimer timer;
     timer.start();
 
+    updateBorderPolygon();
     drawPolygons(painter);
     if(mode == 2) {
         drawLight(painter);
@@ -134,12 +135,18 @@ void rc::Raycaster::finishPolygon() {
 
 void rc::Raycaster::clear() {
     polygons.clear();
-    Polygon border;
-    border.add({-3000, -3000});
-    border.add({3000, -3000});
-    border.add({3000, 3000});
-    border.add({-3000, 3000});
-    polygons.push_back(border);
     polygons.emplace_back();
+    polygons.emplace_back();
+    updateBorderPolygon();
     update();
+}
+
+void rc::Raycaster::updateBorderPolygon() {
+    QSizeF itemSize = size();
+    Polygon polygon;
+    polygon.add({-100, -100});
+    polygon.add({itemSize.width() + 100, -100});
+    polygon.add({itemSize.width() + 100, itemSize.height() + 100});
+    polygon.add({-100, itemSize.height() + 100});
+    polygons[0] = polygon;
 }

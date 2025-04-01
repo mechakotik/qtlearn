@@ -38,6 +38,7 @@ private:
     void drawPolygons(QPainter* painter);
     void drawLight(QPainter* painter);
     std::vector<QPointF> getLightPolygon(const QPointF& source);
+    void updateBorderPolygon();
 
     std::vector<Polygon> polygons;
 
