@@ -135,10 +135,10 @@ void rc::Raycaster::finishPolygon() {
 void rc::Raycaster::clear() {
     polygons.clear();
     Polygon border;
-    border.add({-2000, -2000});
-    border.add({2000, -2000});
-    border.add({2000, 2000});
-    border.add({-2000, 2000});
+    border.add({-3000, -3000});
+    border.add({3000, -3000});
+    border.add({3000, 3000});
+    border.add({-3000, 3000});
     polygons.push_back(border);
     polygons.emplace_back();
     update();
