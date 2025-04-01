@@ -2,16 +2,30 @@
 #include <QPainter>
 
 rc::Raycaster::Raycaster(QQuickItem* parent) : QQuickPaintedItem(parent) {
-    connect(this, &rc::Raycaster::modeChanged, this, &rc::Raycaster::redraw);
-    connect(this, &rc::Raycaster::lightPositionChanged, this, &rc::Raycaster::redraw);
+    setRenderTarget(FramebufferObject);
+    setPerformanceHint(FastFBOResizing, true);
+    connect(this, &Raycaster::modeChanged, this, &Raycaster::redraw);
+    connect(this, &Raycaster::lightPositionChanged, this, &Raycaster::redraw);
     clear();
 }
 
 void rc::Raycaster::paint(QPainter* painter) {
+    QElapsedTimer timer;
+    timer.start();
+
     drawPolygons(painter);
     if(mode == 2) {
         drawLight(painter);
     }
+
+    frameTime = timer.nsecsElapsed() / 1000.0;
+    int fps = 1e6 / frameTime;
+    if(fps > 10000) {
+        fpsText = "∞ FPS";
+    } else {
+        fpsText = QString::asprintf("%i FPS", fps);
+    }
+    fpsTextChanged();
 }
 
 void rc::Raycaster::redraw() {
@@ -69,7 +83,7 @@ std::vector<QPointF> rc::Raycaster::getLightPolygon(const QPointF& source) {
         return a.getAngle() < b.getAngle();
     });
 
-    std::vector<QPointF> res;
+    std::vector<QPointF> raw;
     for(const Ray& ray : rays) {
         std::optional<QPointF> pos;
         for(const Polygon& polygon : polygons) {
@@ -82,7 +96,14 @@ std::vector<QPointF> rc::Raycaster::getLightPolygon(const QPointF& source) {
             }
         }
         if(pos.has_value()) {
-            res.push_back(pos.value());
+            raw.push_back(pos.value());
+        }
+    }
+
+    std::vector<QPointF> res;
+    for(const QPointF& point : raw) {
+        if(res.empty() || distance(point, res.back()) > 0.1) {
+            res.push_back(point);
         }
     }
 
@@ -114,10 +135,10 @@ void rc::Raycaster::finishPolygon() {
 void rc::Raycaster::clear() {
     polygons.clear();
     Polygon border;
-    border.add({0, 0});
-    border.add({2000, 0});
+    border.add({-2000, -2000});
+    border.add({2000, -2000});
     border.add({2000, 2000});
-    border.add({0, 2000});
+    border.add({-2000, 2000});
     polygons.push_back(border);
     polygons.emplace_back();
     update();

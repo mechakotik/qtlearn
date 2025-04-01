@@ -9,8 +9,8 @@ int rc::Polygon::size() const { return static_cast<int>(vertices.size()); }
 QPointF rc::Polygon::at(int index) const { return vertices.at(index); }
 
 std::optional<QPointF> rc::Polygon::intersect(const Ray& ray) const {
-    float l = 0, r = 1e6, eps = 0.01;
-    for(int it = 0; it < 100; it++) {
+    float l = 0, r = 2000, eps = 0.01;
+    for(int it = 0; it < 50; it++) {
         float mid = (l + r) / 2;
         QPointF end = (QVector2D(ray.getOrigin()) + ray.getDirection() * mid).toPointF();
         if(intersects(ray.getOrigin(), end)) {

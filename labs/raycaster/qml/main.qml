@@ -70,7 +70,17 @@ ApplicationWindow {
                     anchors.horizontalCenter: parent.horizontalCenter
                     anchors.verticalCenter: parent.verticalCenter
                 }
+                Label {
+                    text: raycaster.fpsText
+                    font.bold: true
+                    horizontalAlignment: Qt.AlignHCenter
+                    verticalAlignment: Qt.AlignVCenter
+                    anchors.right: hideButton.left
+                    anchors.verticalCenter: parent.verticalCenter
+                    anchors.rightMargin: 20
+                }
                 ToolButton {
+                    id: hideButton
                     icon.source: "/res/icons/hide.svg"
                     onClicked: window.showMinimized()
                     hoverEnabled: true
