@@ -7,12 +7,12 @@ set(CMAKE_AUTORCC ON)
 find_package(Qt6 REQUIRED COMPONENTS Quick QuickControls2 Multimedia)
 qt_standard_project_setup()
 
-#set(TOML11_PRECOMPILE ON)
-#add_subdirectory(external/toml11 EXCLUDE_FROM_ALL)
-
 qt_add_executable(raycaster
         application.qrc
         src/main.cpp
+        src/raycaster.cpp
+        src/ray.cpp
+        src/polygon.cpp
 )
 
 qt_add_qml_module(raycaster
@@ -25,10 +25,6 @@ target_link_libraries(raycaster PRIVATE
         Qt6::Quick
         Qt6::QuickControls2
         Qt6::Multimedia
-        #toml11::toml11
 )
 
-target_include_directories(raycaster PRIVATE
-        src
-        #external/toml11/include
-)
+target_include_directories(raycaster PRIVATE src)

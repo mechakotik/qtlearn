@@ -3,12 +3,13 @@ import QtQuick.Layouts
 import QtQuick.Dialogs
 import QtQuick.Controls
 import QtQuick.Controls.Material
+import Raycaster.Raycaster
 
 ApplicationWindow {
     id: window
     title: "Quick Raycaster"
-    width: 500
-    height: 500
+    width: 1200
+    height: 700
     visible: true
 
     Material.theme: Material.Dark
@@ -27,9 +28,38 @@ ApplicationWindow {
             Item {
                 Layout.fillWidth: true
                 ToolButton {
-                    icon.source: "/res/icons/sidebar.svg"
+                    id: dragButton
                     hoverEnabled: true
+                    icon.source: "/res/icons/drag.svg"
+                    opacity: (raycaster.mode === 0 ? 1 : 0.5)
+                    onClicked: raycaster.mode = 0
                     anchors.left: parent.left
+                    anchors.verticalCenter: parent.verticalCenter
+                }
+                ToolButton {
+                    id: polylineButton
+                    hoverEnabled: true
+                    icon.source: "/res/icons/polyline.svg"
+                    opacity: (raycaster.mode === 1 ? 1 : 0.5)
+                    onClicked: raycaster.mode = 1
+                    anchors.left: dragButton.right
+                    anchors.verticalCenter: parent.verticalCenter
+                }
+                ToolButton {
+                    id: lightButton
+                    hoverEnabled: true
+                    icon.source: "/res/icons/light.svg"
+                    opacity: (raycaster.mode === 2 ? 1 : 0.5)
+                    onClicked: raycaster.mode = 2
+                    anchors.left: polylineButton.right
+                    anchors.verticalCenter: parent.verticalCenter
+                }
+                ToolButton {
+                    id: clearButton
+                    icon.source: "/res/icons/delete.svg"
+                    hoverEnabled: true
+                    onClicked: raycaster.clear()
+                    anchors.left: lightButton.right
                     anchors.verticalCenter: parent.verticalCenter
                 }
                 Label {
@@ -56,6 +86,31 @@ ApplicationWindow {
                     anchors.verticalCenter: parent.verticalCenter
                 }
             }
+        }
+    }
+
+    Raycaster {
+        id: raycaster
+        anchors.fill: parent
+        MouseArea {
+            anchors.fill: parent
+            acceptedButtons: Qt.LeftButton | Qt.RightButton
+            enabled: raycaster.mode == 1
+            hoverEnabled: true
+            onClicked: (mouse)=> {
+                if(mouse.button === Qt.LeftButton) {
+                    raycaster.newVertex({x: mouseX, y: mouseY})
+                } else {
+                    raycaster.finishPolygon()
+                }
+            }
+            onPositionChanged: raycaster.setLastVertex({x: mouseX, y: mouseY})
+        }
+        MouseArea {
+            anchors.fill: parent
+            enabled: raycaster.mode === 2
+            hoverEnabled: true
+            onPositionChanged: raycaster.lightPosition = {x: mouseX, y: mouseY}
         }
     }
 }
