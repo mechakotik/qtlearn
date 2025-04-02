@@ -8,10 +8,10 @@ rc::Ray::Ray(const QPointF& begin, const QPointF& end) : origin(begin) {
 
 QPointF rc::Ray::getOrigin() const { return origin; }
 QVector2D rc::Ray::getDirection() const { return direction; }
-float rc::Ray::getAngle() const { return std::atan2(direction.y(), direction.x()); }
+double rc::Ray::getAngle() const { return std::atan2(direction.y(), direction.x()); }
 
-rc::Ray rc::Ray::rotate(float angle) const {
-    float ang = getAngle() + angle;
+rc::Ray rc::Ray::rotate(double angle) const {
+    double ang = getAngle() + angle;
     QVector2D newDirection(std::cos(ang), std::sin(ang));
     return Ray(origin, newDirection);
 }

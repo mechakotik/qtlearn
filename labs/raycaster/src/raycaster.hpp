@@ -23,7 +23,7 @@ public:
     // Camera
     Q_INVOKABLE void shift(QPointF mouse);
     Q_INVOKABLE void resetShift();
-    Q_INVOKABLE void rescale(float factor, QPointF mouse);
+    Q_INVOKABLE void rescale(double factor, QPointF mouse);
 
     // Polygon editing
     Q_INVOKABLE void newVertex(QPointF point);
@@ -59,7 +59,7 @@ private:
     int mode = 0;
 
     QString fpsText = "∞ FPS";
-    float frameTime = 0;
+    double frameTime = 0;
 };
 
 #endif // RAYCASTER_HPP

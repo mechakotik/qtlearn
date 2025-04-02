@@ -10,18 +10,18 @@ namespace rc {
 
 class rc::Camera {
 public:
-    [[nodiscard]] QPointF toGlobal(QPointF point, float height) const;
-    [[nodiscard]] QPointF toLocal(QPointF point, float height) const;
-    void shift(QPointF delta, float height);
-    void rescale(float factor, QPointF mouse, QSizeF size);
+    [[nodiscard]] QPointF toGlobal(QPointF point, double height) const;
+    [[nodiscard]] QPointF toLocal(QPointF point, double height) const;
+    void shift(QPointF delta, double height);
+    void rescale(double factor, QPointF mouse, QSizeF size);
     [[nodiscard]] QPointF getTopLeft() const;
-    [[nodiscard]] float getScale() const;
+    [[nodiscard]] double getScale() const;
 
 private:
     void normalizeTopLeft();
 
     QPointF topLeft{0, 0};
-    float scale = 30;
+    double scale = 30;
 };
 
 #endif // CAMERA_HPP

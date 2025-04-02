@@ -14,8 +14,8 @@ public:
     Ray(const QPointF& begin, const QPointF& end);
     [[nodiscard]] QPointF getOrigin() const;
     [[nodiscard]] QVector2D getDirection() const;
-    [[nodiscard]] float getAngle() const;
-    [[nodiscard]] Ray rotate(float angle) const;
+    [[nodiscard]] double getAngle() const;
+    [[nodiscard]] Ray rotate(double angle) const;
 
 private:
     QPointF origin;

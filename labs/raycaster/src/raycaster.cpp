@@ -64,7 +64,7 @@ void rc::Raycaster::drawLightSource(QPainter* painter, QPointF source) {
     painter->setBrush(QColor("#2eeeeeee"));
     painter->drawPolygon(polygon.data(), polygon.size());
 
-    for(float angle = 0; angle < std::numbers::pi * 2; angle += std::numbers::pi / 3) {
+    for(double angle = 0; angle < std::numbers::pi * 2; angle += std::numbers::pi / 3) {
         QPointF pos = source + QPointF(std::cos(angle), std::sin(angle)) * 0.75;
         std::vector<QPointF> polygon = getLightPolygon(pos);
         painter->drawPolygon(polygon.data(), polygon.size());
@@ -72,7 +72,7 @@ void rc::Raycaster::drawLightSource(QPainter* painter, QPointF source) {
 }
 
 namespace {
-    float distance(const QPointF& a, const QPointF& b) {
+    double distance(const QPointF& a, const QPointF& b) {
         return std::sqrt((b.x() - a.x()) * (b.x() - a.x()) + (b.y() - a.y()) * (b.y() - a.y()));
     }
 }
@@ -123,7 +123,7 @@ std::vector<QPointF> rc::Raycaster::getLightPolygon(const QPointF& source) {
     return res;
 }
 
-void rc::Raycaster::rescale(float factor, QPointF mouse) {
+void rc::Raycaster::rescale(double factor, QPointF mouse) {
     cam.rescale(factor, mouse, size());
     updateBorderPolygon();
     update();
@@ -177,10 +177,10 @@ void rc::Raycaster::addStaticLight() {
 
 void rc::Raycaster::clear() {
     Polygon border;
-    border.add({-2e3, -2e3});
-    border.add({2e3, -2e3});
-    border.add({2e3, 2e3});
-    border.add({-2e3, 2e3});
+    border.add({-2e4, -2e4});
+    border.add({2e4, -2e4});
+    border.add({2e4, 2e4});
+    border.add({-2e4, 2e4});
     polygons.clear();
     polygons.push_back(border);
     polygons.emplace_back();
