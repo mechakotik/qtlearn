@@ -18,8 +18,10 @@ public:
     [[nodiscard]] float getScale() const;
 
 private:
+    void normalizeTopLeft();
+
     QPointF topLeft{0, 0};
-    float scale = 1;
+    float scale = 30;
 };
 
 #endif // CAMERA_HPP

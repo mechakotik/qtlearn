@@ -8,36 +8,46 @@ void rc::Polygon::pop() { vertices.pop_back(); }
 int rc::Polygon::size() const { return static_cast<int>(vertices.size()); }
 QPointF rc::Polygon::at(int index) const { return vertices.at(index); }
 
-std::optional<QPointF> rc::Polygon::intersect(const Ray& ray) const {
-    float l = 0, r = 10000;
-    for(int it = 0; it < 30; it++) {
-        float mid = (l + r) / 2;
-        QPointF end = (QVector2D(ray.getOrigin()) + ray.getDirection() * mid).toPointF();
-        if(intersects(ray.getOrigin(), end)) {
-            r = mid;
-        } else {
-            l = mid;
-        }
+std::optional<QPointF> intersectSegments(const QPointF& a, const QPointF& b, const QPointF& c, const QPointF& d) {
+    float x1 = a.x(), y1 = a.y();
+    float x2 = b.x(), y2 = b.y();
+    float x3 = c.x(), y3 = c.y();
+    float x4 = d.x(), y4 = d.y();
+    float pxA = (x1 * y2 - y1 * x2) * (x3 - x4) - (x1 - x2) * (x3 * y4 - y3 * x4);
+    float pxB = (x1 - x2) * (y3 - y4) - (y1 - y2) * (x3 - x4);
+    float pyA = (x1 * y2 - y1 * x2) * (y3 - y4) - (y1 - y2) * (x3 * y4 - y3 * x4);
+    float pyB = (x1 - x2) * (y3 - y4) - (y1 - y2) * (x3 - x4);
+    QPointF res(pxA / pxB, pyA / pyB);
+    float eps = std::max({std::abs(x1), std::abs(x2), std::abs(x3), std::abs(x4)}) * 1e-12;
+    if(std::min(x1, x2) - eps <= res.x() && res.x() <= std::max(x1, x2) + eps && std::min(x3, x4) - eps <= res.x() && res.x() <= std::max(x3, x4) + eps &&
+        std::min(y1, y2) - eps <= res.y() && res.y() <= std::max(y1, y2) + eps && std::min(y3, y4) - eps <= res.y() && res.y() <= std::max(y3, y4) + eps) {
+        return res;
     }
-    if(r > 8e5) {
-        return std::nullopt;
-    }
-    return (QVector2D(ray.getOrigin()) + ray.getDirection() * l).toPointF();
+    return std::nullopt;
 }
 
-bool rc::Polygon::intersects(const QPointF& a, const QPointF& b) const {
-    for(int i = 0; i < vertices.size(); i++) {
-        QPointF c = vertices.at(i);
-        QPointF d = vertices.at((i + 1) % vertices.size());
+namespace {
+    float distance(const QPointF& a, const QPointF& b) {
+        return std::sqrt((b.x() - a.x()) * (b.x() - a.x()) + (b.y() - a.y()) * (b.y() - a.y()));
+    }
+}
 
-        float s1 = (a.x() - c.x()) * (d.y() - c.y()) - (a.y() - c.y()) * (d.x() - c.x());
-        float s2 = (b.x() - c.x()) * (d.y() - c.y()) - (b.y() - c.y()) * (d.x() - c.x());
-        float s3 = (c.x() - a.x()) * (b.y() - a.y()) - (c.y() - a.y()) * (b.x() - a.x());
-        float s4 = (d.x() - a.x()) * (b.y() - a.y()) - (d.y() - a.y()) * (b.x() - a.x());
-        if(s1 * s2 <= 0 && s3 * s4 <= 0) {
-            return true;
+std::optional<QPointF> rc::Polygon::intersect(const Ray& ray) const {
+    QPointF rayBegin = ray.getOrigin();
+    QPointF rayEnd = (QVector2D(ray.getOrigin()) + ray.getDirection() * 1e8).toPointF();
+    std::optional<QPointF> res;
+
+    for(int i = 0; i < vertices.size(); i++) {
+        QPointF cur = vertices.at(i);
+        QPointF next = vertices.at((i + 1) % vertices.size());
+        std::optional<QPointF> pt = intersectSegments(cur, next, rayBegin, rayEnd);
+        if(!pt.has_value()) {
+            continue;
+        }
+        if(!res.has_value() || distance(rayBegin, pt.value()) < distance(rayBegin, res.value())) {
+            res = pt;
         }
     }
 
-    return false;
+    return res;
 }

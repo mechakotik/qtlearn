@@ -18,8 +18,6 @@ public:
     [[nodiscard]] std::optional<QPointF> intersect(const Ray& ray) const;
 
 private:
-    [[nodiscard]] bool intersects(const QPointF& a, const QPointF& b) const;
-
     std::vector<QPointF> vertices;
 };
 

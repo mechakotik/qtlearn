@@ -65,14 +65,16 @@ void rc::Raycaster::drawLightSource(QPainter* painter, QPointF source) {
     painter->drawPolygon(polygon.data(), polygon.size());
 
     for(float angle = 0; angle < std::numbers::pi * 2; angle += std::numbers::pi / 3) {
-        QPointF pos = source + QPointF(std::cos(angle), std::sin(angle)) * 0.025;
+        QPointF pos = source + QPointF(std::cos(angle), std::sin(angle)) * 0.75;
         std::vector<QPointF> polygon = getLightPolygon(pos);
         painter->drawPolygon(polygon.data(), polygon.size());
     }
 }
 
-float distance(const QPointF& a, const QPointF& b) {
-    return std::sqrt((b.x() - a.x()) * (b.x() - a.x()) + (b.y() - a.y()) * (b.y() - a.y()));
+namespace {
+    float distance(const QPointF& a, const QPointF& b) {
+        return std::sqrt((b.x() - a.x()) * (b.x() - a.x()) + (b.y() - a.y()) * (b.y() - a.y()));
+    }
 }
 
 std::vector<QPointF> rc::Raycaster::getLightPolygon(const QPointF& source) {
@@ -101,6 +103,9 @@ std::vector<QPointF> rc::Raycaster::getLightPolygon(const QPointF& source) {
             if(!pos.has_value() || distance(source, cur.value()) < distance(source, pos.value())) {
                 pos = cur;
             }
+        }
+        if(!pos.has_value()) {
+            pos = (QVector2D(ray.getOrigin()) + ray.getDirection() * 1000000).toPointF();
         }
         if(pos.has_value()) {
             raw.push_back(pos.value());
@@ -171,24 +176,20 @@ void rc::Raycaster::addStaticLight() {
 }
 
 void rc::Raycaster::clear() {
+    Polygon border;
+    border.add({-2e3, -2e3});
+    border.add({2e3, -2e3});
+    border.add({2e3, 2e3});
+    border.add({-2e3, 2e3});
     polygons.clear();
-    polygons.emplace_back();
+    polygons.push_back(border);
     polygons.emplace_back();
     staticLights.clear();
+    cam = Camera();
     updateBorderPolygon();
     update();
 }
 
 void rc::Raycaster::updateBorderPolygon() {
-    QSizeF itemSize = size();
-    Polygon polygon;
 
-    QPointF topLeft = cam.getTopLeft();
-    float scale = cam.getScale();
-
-    polygon.add(topLeft + QPointF(-1, -1) * scale);
-    polygon.add(topLeft + QPointF(4, -1) * scale);
-    polygon.add(topLeft + QPointF(4, 2) * scale);
-    polygon.add(topLeft + QPointF(-1, 2) * scale);
-    polygons[0] = polygon;
 }
