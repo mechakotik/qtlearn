@@ -65,7 +65,7 @@ void rc::Raycaster::drawLightSource(QPainter* painter, QPointF source) {
     painter->drawPolygon(polygon.data(), polygon.size());
 
     for(float angle = 0; angle < std::numbers::pi * 2; angle += std::numbers::pi / 3) {
-        QPointF pos = source + QPointF(std::cos(angle), std::sin(angle)) * 0.025 * cam.getScale();
+        QPointF pos = source + QPointF(std::cos(angle), std::sin(angle)) * 0.025;
         std::vector<QPointF> polygon = getLightPolygon(pos);
         painter->drawPolygon(polygon.data(), polygon.size());
     }
