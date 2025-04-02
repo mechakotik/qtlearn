@@ -40,8 +40,8 @@ void rc::Raycaster::drawPolygons(QPainter* painter) {
 
     for(int p = 1; p < polygons.size(); p++) {
         for(int i = 0; i < polygons[p].size(); i++) {
-            QPointF cur = polygons[p].at(i);
-            QPointF next = polygons[p].at((i + 1) % polygons[p].size());
+            QPointF cur = cam.toLocal(polygons[p].at(i), height());
+            QPointF next = cam.toLocal(polygons[p].at((i + 1) % polygons[p].size()), height());
             if(mode != 2) {
                 painter->drawEllipse(cur.x() - 4, cur.y() - 4, 8, 8);
             }
@@ -53,13 +53,14 @@ void rc::Raycaster::drawPolygons(QPainter* painter) {
 }
 
 void rc::Raycaster::drawLight(QPainter* painter) {
-    std::vector<QPointF> polygon = getLightPolygon(lightPosition);
+    QPointF realLightPosition = cam.toGlobal(lightPosition, height());
+    std::vector<QPointF> polygon = getLightPolygon(realLightPosition);
     painter->setPen(QPen(QColor("#00000000")));
     painter->setBrush(QColor("#2eeeeeee"));
     painter->drawPolygon(polygon.data(), polygon.size());
 
     for(float angle = 0; angle < std::numbers::pi * 2; angle += std::numbers::pi / 3) {
-        QPointF pos = lightPosition + QPointF(std::cos(angle), std::sin(angle)) * 16;
+        QPointF pos = realLightPosition + QPointF(std::cos(angle), std::sin(angle)) * 0.025 * cam.getScale();
         std::vector<QPointF> polygon = getLightPolygon(pos);
         painter->drawPolygon(polygon.data(), polygon.size());
     }
@@ -102,7 +103,8 @@ std::vector<QPointF> rc::Raycaster::getLightPolygon(const QPointF& source) {
     }
 
     std::vector<QPointF> res;
-    for(const QPointF& point : raw) {
+    for(QPointF point : raw) {
+        point = cam.toLocal(point, height());
         if(res.empty() || distance(point, res.back()) > 0.1) {
             res.push_back(point);
         }
@@ -111,7 +113,30 @@ std::vector<QPointF> rc::Raycaster::getLightPolygon(const QPointF& source) {
     return res;
 }
 
+void rc::Raycaster::rescale(float factor, QPointF mouse) {
+    cam.rescale(factor, mouse, size());
+    updateBorderPolygon();
+    update();
+}
+
+void rc::Raycaster::shift(QPointF mouse) {
+    if(!shiftActive) {
+        shiftActive = true;
+    } else {
+        QPointF delta = mouse - lastMouse;
+        cam.shift(delta, height());
+    }
+    lastMouse = mouse;
+    updateBorderPolygon();
+    update();
+}
+
+void rc::Raycaster::resetShift() {
+    shiftActive = false;
+}
+
 void rc::Raycaster::newVertex(QPointF point) {
+    point = cam.toGlobal(point, height());
     if(polygons.back().size() == 0) {
         polygons.back().add(point);
     }
@@ -120,6 +145,7 @@ void rc::Raycaster::newVertex(QPointF point) {
 }
 
 void rc::Raycaster::setLastVertex(QPointF point) {
+    point = cam.toGlobal(point, height());
     if(polygons.back().size() == 0) {
         return;
     }
@@ -144,9 +170,13 @@ void rc::Raycaster::clear() {
 void rc::Raycaster::updateBorderPolygon() {
     QSizeF itemSize = size();
     Polygon polygon;
-    polygon.add({-100, -100});
-    polygon.add({itemSize.width() + 100, -100});
-    polygon.add({itemSize.width() + 100, itemSize.height() + 100});
-    polygon.add({-100, itemSize.height() + 100});
+
+    QPointF topLeft = cam.getTopLeft();
+    float scale = cam.getScale();
+
+    polygon.add(topLeft + QPointF(-1, -1) * scale);
+    polygon.add(topLeft + QPointF(4, -1) * scale);
+    polygon.add(topLeft + QPointF(4, 2) * scale);
+    polygon.add(topLeft + QPointF(-1, 2) * scale);
     polygons[0] = polygon;
 }

@@ -104,6 +104,19 @@ ApplicationWindow {
         anchors.fill: parent
         MouseArea {
             anchors.fill: parent
+            enabled: raycaster.mode == 0
+            hoverEnabled: true
+            onPositionChanged: {
+                if(pressed) {
+                    raycaster.shift({x: mouseX, y: mouseY})
+                } else {
+                    raycaster.resetShift()
+                }
+            }
+            onWheel: (wheel)=> raycaster.rescale(-wheel.angleDelta.y / 960, {x: mouseX, y: mouseY})
+        }
+        MouseArea {
+            anchors.fill: parent
             acceptedButtons: Qt.LeftButton | Qt.RightButton
             enabled: raycaster.mode == 1
             hoverEnabled: true

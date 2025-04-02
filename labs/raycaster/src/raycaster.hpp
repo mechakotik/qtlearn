@@ -3,6 +3,7 @@
 
 #include <QQuickPaintedItem>
 #include "polygon.hpp"
+#include "camera.hpp"
 
 namespace rc {
     class Raycaster;
@@ -18,6 +19,11 @@ class rc::Raycaster : public QQuickPaintedItem {
 public:
     Raycaster(QQuickItem* parent = nullptr);
     void paint(QPainter* painter) override;
+
+    // Camera
+    Q_INVOKABLE void shift(QPointF mouse);
+    Q_INVOKABLE void resetShift();
+    Q_INVOKABLE void rescale(float factor, QPointF mouse);
 
     // Polygon editing
     Q_INVOKABLE void newVertex(QPointF point);
@@ -41,6 +47,10 @@ private:
     void updateBorderPolygon();
 
     std::vector<Polygon> polygons;
+    Camera cam;
+
+    QPointF lastMouse;
+    bool shiftActive = false;
 
     QPointF lightPosition;
     int mode = 0;

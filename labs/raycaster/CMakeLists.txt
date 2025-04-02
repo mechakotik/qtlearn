@@ -13,6 +13,7 @@ qt_add_executable(raycaster
         src/raycaster.cpp
         src/ray.cpp
         src/polygon.cpp
+        src/camera.cpp
 )
 
 qt_add_qml_module(raycaster
