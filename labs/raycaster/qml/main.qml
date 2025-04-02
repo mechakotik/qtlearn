@@ -113,7 +113,7 @@ ApplicationWindow {
                     raycaster.resetShift()
                 }
             }
-            onWheel: (wheel)=> raycaster.rescale(-wheel.angleDelta.y / 960, {x: mouseX, y: mouseY})
+            onWheel: (wheel)=> raycaster.rescale(-wheel.angleDelta.y / 1440, {x: mouseX, y: mouseY})
         }
         MouseArea {
             anchors.fill: parent
@@ -133,6 +133,7 @@ ApplicationWindow {
             anchors.fill: parent
             enabled: raycaster.mode === 2
             hoverEnabled: true
+            onClicked: raycaster.addStaticLight()
             onPositionChanged: raycaster.lightPosition = {x: mouseX, y: mouseY}
         }
     }

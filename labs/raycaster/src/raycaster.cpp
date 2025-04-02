@@ -16,9 +16,7 @@ void rc::Raycaster::paint(QPainter* painter) {
 
     updateBorderPolygon();
     drawPolygons(painter);
-    if(mode == 2) {
-        drawLight(painter);
-    }
+    drawLights(painter);
 
     frameTime = timer.nsecsElapsed() / 1000.0;
     int fps = 1e6 / frameTime;
@@ -43,25 +41,31 @@ void rc::Raycaster::drawPolygons(QPainter* painter) {
         for(int i = 0; i < polygons[p].size(); i++) {
             QPointF cur = cam.toLocal(polygons[p].at(i), height());
             QPointF next = cam.toLocal(polygons[p].at((i + 1) % polygons[p].size()), height());
-            if(mode != 2) {
+            if(mode == 1) {
                 painter->drawEllipse(cur.x() - 4, cur.y() - 4, 8, 8);
             }
-            if(i != polygons[p].size () - 1 || p != polygons.size() - 1) {
-                painter->drawLine(cur.x(), cur.y(), next.x(), next.y());
-            }
+            painter->drawLine(cur.x(), cur.y(), next.x(), next.y());
         }
     }
 }
 
-void rc::Raycaster::drawLight(QPainter* painter) {
-    QPointF realLightPosition = cam.toGlobal(lightPosition, height());
-    std::vector<QPointF> polygon = getLightPolygon(realLightPosition);
+void rc::Raycaster::drawLights(QPainter* painter) {
+    for(const QPointF& source : staticLights) {
+        drawLightSource(painter, source);
+    }
+    if(mode == 2) {
+        drawLightSource(painter, cam.toGlobal(lightPosition, height()));
+    }
+}
+
+void rc::Raycaster::drawLightSource(QPainter* painter, QPointF source) {
+    std::vector<QPointF> polygon = getLightPolygon(source);
     painter->setPen(QPen(QColor("#00000000")));
     painter->setBrush(QColor("#2eeeeeee"));
     painter->drawPolygon(polygon.data(), polygon.size());
 
     for(float angle = 0; angle < std::numbers::pi * 2; angle += std::numbers::pi / 3) {
-        QPointF pos = realLightPosition + QPointF(std::cos(angle), std::sin(angle)) * 0.025 * cam.getScale();
+        QPointF pos = source + QPointF(std::cos(angle), std::sin(angle)) * 0.025 * cam.getScale();
         std::vector<QPointF> polygon = getLightPolygon(pos);
         painter->drawPolygon(polygon.data(), polygon.size());
     }
@@ -162,10 +166,15 @@ void rc::Raycaster::finishPolygon() {
     }
 }
 
+void rc::Raycaster::addStaticLight() {
+    staticLights.push_back(cam.toGlobal(lightPosition, height()));
+}
+
 void rc::Raycaster::clear() {
     polygons.clear();
     polygons.emplace_back();
     polygons.emplace_back();
+    staticLights.clear();
     updateBorderPolygon();
     update();
 }

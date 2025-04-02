@@ -30,6 +30,7 @@ public:
     Q_INVOKABLE void setLastVertex(QPointF point);
     Q_INVOKABLE void finishPolygon();
 
+    Q_INVOKABLE void addStaticLight();
     Q_INVOKABLE void clear();
 
 signals:
@@ -42,7 +43,8 @@ public slots:
 
 private:
     void drawPolygons(QPainter* painter);
-    void drawLight(QPainter* painter);
+    void drawLights(QPainter* painter);
+    void drawLightSource(QPainter* painter, QPointF source);
     std::vector<QPointF> getLightPolygon(const QPointF& source);
     void updateBorderPolygon();
 
@@ -52,6 +54,7 @@ private:
     QPointF lastMouse;
     bool shiftActive = false;
 
+    std::vector<QPointF> staticLights;
     QPointF lightPosition;
     int mode = 0;
 
