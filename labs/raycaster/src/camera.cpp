@@ -28,14 +28,14 @@ void rc::Camera::normalizeTopLeft() {
     if(topLeft.x() < -10000) {
         topLeft.setX(-10000);
     }
-    if(topLeft.x() > 10000) {
-        topLeft.setX(10000);
+    if(topLeft.x() > 10000 - scale) {
+        topLeft.setX(10000 - scale);
     }
     if(topLeft.y() < -10000) {
         topLeft.setY(-10000);
     }
-    if(topLeft.y() > 10000) {
-        topLeft.setY(10000);
+    if(topLeft.y() > 10000 - scale) {
+        topLeft.setY(10000 - scale);
     }
 }
 
