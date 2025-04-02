@@ -4,6 +4,7 @@
 rc::Raycaster::Raycaster(QQuickItem* parent) : QQuickPaintedItem(parent) {
     setRenderTarget(FramebufferObject);
     setPerformanceHint(FastFBOResizing, true);
+    connect(this, &Raycaster::modeChanged, this, &Raycaster::finishPolygon);
     connect(this, &Raycaster::modeChanged, this, &Raycaster::redraw);
     connect(this, &Raycaster::lightPositionChanged, this, &Raycaster::redraw);
     clear();
@@ -154,9 +155,11 @@ void rc::Raycaster::setLastVertex(QPointF point) {
 }
 
 void rc::Raycaster::finishPolygon() {
-    polygons.back().pop();
-    polygons.emplace_back();
-    update();
+    if(polygons.size() >= 2 && polygons.back().size() != 0) {
+        polygons.back().pop();
+        polygons.emplace_back();
+        update();
+    }
 }
 
 void rc::Raycaster::clear() {
