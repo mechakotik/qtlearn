@@ -10,8 +10,7 @@ void rc::Camera::shift(QPointF delta, double height) {
 }
 
 void rc::Camera::rescale(double factor, QPointF mouse, QSizeF size) {
-    double dx = mouse.x() / size.width();
-    double dy = mouse.y() / size.height();
+    QPointF oldMousePos = toGlobal(mouse, size.height());
 
     if(scale * (1 + factor) < 1.0F) {
         scale = 1.0F;
@@ -19,9 +18,11 @@ void rc::Camera::rescale(double factor, QPointF mouse, QSizeF size) {
         scale = 10000.0F;
     } else {
         scale *= (1 + factor);
-        topLeft = topLeft - QPointF(dx, dy) * factor;
-        normalizeTopLeft();
     }
+
+    QPointF newMousePos = toGlobal(mouse, size.height());
+    topLeft += oldMousePos - newMousePos;
+    normalizeTopLeft();
 }
 
 void rc::Camera::normalizeTopLeft() {
