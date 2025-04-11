@@ -86,6 +86,12 @@ std::vector<QPointF> rc::Raycaster::getLightPolygon(const QPointF& source) {
             rays.push_back(ray.rotate(0.01));
             rays.push_back(ray.rotate(-0.01));
         }
+        for(int i = 0; i < polygon.extraSize(); i++) {
+            Ray ray(source, polygon.extraAt(i));
+            rays.push_back(ray);
+            rays.push_back(ray.rotate(0.01));
+            rays.push_back(ray.rotate(-0.01));
+        }
     }
 
     std::ranges::sort(rays, [](const Ray& a, const Ray& b) {
