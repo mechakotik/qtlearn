@@ -14,6 +14,7 @@ ApplicationWindow {
 
     Material.theme: Material.Dark
     Material.primary: "#3f3c40"
+    Material.background: "#1c1b1f"
     Material.accent: Material.Grey
 
     header: ToolBar {
