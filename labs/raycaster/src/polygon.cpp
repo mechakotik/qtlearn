@@ -1,7 +1,7 @@
 #include "polygon.hpp"
-#include "util.hpp"
 #include <QPointF>
 #include <QVector2D>
+#include "util.hpp"
 
 void rc::Polygon::add(QPointF vertex) { vertices.push_back(vertex); }
 void rc::Polygon::setLast(QPointF vertex) { vertices.back() = vertex; }

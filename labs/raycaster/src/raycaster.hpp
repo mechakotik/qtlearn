@@ -2,8 +2,8 @@
 #define RAYCASTER_HPP
 
 #include <QQuickPaintedItem>
-#include "polygon.hpp"
 #include "camera.hpp"
+#include "polygon.hpp"
 
 namespace rc {
     class Raycaster;

@@ -1,6 +1,6 @@
 #include "raycaster.hpp"
-#include "util.hpp"
 #include <QPainter>
+#include "util.hpp"
 
 rc::Raycaster::Raycaster(QQuickItem* parent) : QQuickPaintedItem(parent) {
     setRenderTarget(FramebufferObject);
@@ -28,9 +28,7 @@ void rc::Raycaster::paint(QPainter* painter) {
     fpsTextChanged();
 }
 
-void rc::Raycaster::redraw() {
-    update();
-}
+void rc::Raycaster::redraw() { update(); }
 
 void rc::Raycaster::drawPolygons(QPainter* painter) {
     painter->setPen(QPen(QColor("#eeeeee"), 2));
@@ -88,9 +86,7 @@ std::vector<QPointF> rc::Raycaster::getLightPolygon(const QPointF& source) {
         rays.push_back(ray.rotate(-0.01));
     }
 
-    std::ranges::sort(rays, [](const Ray& a, const Ray& b) {
-        return a.getAngle() < b.getAngle();
-    });
+    std::ranges::sort(rays, [](const Ray& a, const Ray& b) { return a.getAngle() < b.getAngle(); });
 
     std::vector<QPointF> raw;
     for(const Ray& ray : rays) {
@@ -139,9 +135,7 @@ void rc::Raycaster::shift(QPointF mouse) {
     update();
 }
 
-void rc::Raycaster::resetShift() {
-    shiftActive = false;
-}
+void rc::Raycaster::resetShift() { shiftActive = false; }
 
 void rc::Raycaster::newVertex(QPointF point) {
     point = cam.toGlobal(point, height());
@@ -192,9 +186,7 @@ void rc::Raycaster::rebuildExtraPoints() {
     }
 }
 
-void rc::Raycaster::addStaticLight() {
-    staticLights.push_back(cam.toGlobal(lightPosition, height()));
-}
+void rc::Raycaster::addStaticLight() { staticLights.push_back(cam.toGlobal(lightPosition, height())); }
 
 void rc::Raycaster::clear() {
     Polygon border;
