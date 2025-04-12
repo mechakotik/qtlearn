@@ -46,7 +46,7 @@ private:
     void drawLights(QPainter* painter);
     void drawLightSource(QPainter* painter, QPointF source);
     std::vector<QPointF> getLightPolygon(const QPointF& source);
-    void updateBorderPolygon();
+    void rebuildExtraPoints();
 
     std::vector<Polygon> polygons;
     Camera cam;
@@ -57,6 +57,8 @@ private:
     std::vector<QPointF> staticLights;
     QPointF lightPosition;
     int mode = 0;
+
+    std::vector<QPointF> extraPoints;
 
     QString fpsText = "∞ FPS";
     double frameTime = 0;

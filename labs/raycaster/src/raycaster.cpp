@@ -1,4 +1,5 @@
 #include "raycaster.hpp"
+#include "util.hpp"
 #include <QPainter>
 
 rc::Raycaster::Raycaster(QQuickItem* parent) : QQuickPaintedItem(parent) {
@@ -14,7 +15,6 @@ void rc::Raycaster::paint(QPainter* painter) {
     QElapsedTimer timer;
     timer.start();
 
-    updateBorderPolygon();
     drawPolygons(painter);
     drawLights(painter);
 
@@ -71,12 +71,6 @@ void rc::Raycaster::drawLightSource(QPainter* painter, QPointF source) {
     }
 }
 
-namespace {
-    double distance(const QPointF& a, const QPointF& b) {
-        return std::sqrt((b.x() - a.x()) * (b.x() - a.x()) + (b.y() - a.y()) * (b.y() - a.y()));
-    }
-}
-
 std::vector<QPointF> rc::Raycaster::getLightPolygon(const QPointF& source) {
     std::vector<Ray> rays;
     for(const Polygon& polygon : polygons) {
@@ -86,6 +80,12 @@ std::vector<QPointF> rc::Raycaster::getLightPolygon(const QPointF& source) {
             rays.push_back(ray.rotate(0.01));
             rays.push_back(ray.rotate(-0.01));
         }
+    }
+    for(QPointF p : extraPoints) {
+        Ray ray(source, p);
+        rays.push_back(ray);
+        rays.push_back(ray.rotate(0.01));
+        rays.push_back(ray.rotate(-0.01));
     }
 
     std::ranges::sort(rays, [](const Ray& a, const Ray& b) {
@@ -125,7 +125,6 @@ std::vector<QPointF> rc::Raycaster::getLightPolygon(const QPointF& source) {
 
 void rc::Raycaster::rescale(double factor, QPointF mouse) {
     cam.rescale(factor, mouse, size());
-    updateBorderPolygon();
     update();
 }
 
@@ -137,7 +136,6 @@ void rc::Raycaster::shift(QPointF mouse) {
         cam.shift(delta, height());
     }
     lastMouse = mouse;
-    updateBorderPolygon();
     update();
 }
 
@@ -151,6 +149,7 @@ void rc::Raycaster::newVertex(QPointF point) {
         polygons.back().add(point);
     }
     polygons.back().add(point);
+    rebuildExtraPoints();
     update();
 }
 
@@ -160,6 +159,7 @@ void rc::Raycaster::setLastVertex(QPointF point) {
         return;
     }
     polygons.back().setLast(point);
+    rebuildExtraPoints();
     update();
 }
 
@@ -167,7 +167,28 @@ void rc::Raycaster::finishPolygon() {
     if(polygons.size() >= 2 && polygons.back().size() != 0) {
         polygons.back().pop();
         polygons.emplace_back();
+        rebuildExtraPoints();
         update();
+    }
+}
+
+void rc::Raycaster::rebuildExtraPoints() {
+    extraPoints.clear();
+    for(int p1 = 0; p1 < polygons.size(); p1++) {
+        for(int p2 = p1; p2 < polygons.size(); p2++) {
+            for(int i = 0; i < polygons[p1].size(); i++) {
+                for(int j = 0; j < polygons[p2].size(); j++) {
+                    QPointF a = polygons[p1].at(i);
+                    QPointF b = polygons[p1].at((i + 1) % polygons[p1].size());
+                    QPointF c = polygons[p2].at(j);
+                    QPointF d = polygons[p2].at((j + 1) % polygons[p2].size());
+                    std::optional<QPointF> p = intersectSegments(a, b, c, d);
+                    if(p.has_value()) {
+                        extraPoints.push_back(p.value());
+                    }
+                }
+            }
+        }
     }
 }
 
@@ -186,10 +207,5 @@ void rc::Raycaster::clear() {
     polygons.emplace_back();
     staticLights.clear();
     cam = Camera();
-    updateBorderPolygon();
     update();
-}
-
-void rc::Raycaster::updateBorderPolygon() {
-
 }
