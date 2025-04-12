@@ -2,26 +2,11 @@
 #include <QPointF>
 #include <QVector2D>
 
-void rc::Polygon::add(QPointF vertex) {
-    vertices.push_back(vertex);
-    rebuildExtra();
-}
-
-void rc::Polygon::setLast(QPointF vertex) {
-    vertices.back() = vertex;
-    rebuildExtra();
-}
-
-void rc::Polygon::pop() {
-    vertices.pop_back();
-    rebuildExtra();
-}
-
+void rc::Polygon::add(QPointF vertex) { vertices.push_back(vertex); }
+void rc::Polygon::setLast(QPointF vertex) { vertices.back() = vertex; }
+void rc::Polygon::pop() { vertices.pop_back(); }
 int rc::Polygon::size() const { return static_cast<int>(vertices.size()); }
 QPointF rc::Polygon::at(int index) const { return vertices.at(index); }
-
-int rc::Polygon::extraSize() const { return static_cast<int>(extra.size()); }
-QPointF rc::Polygon::extraAt(int index) const { return extra.at(index); }
 
 std::optional<QPointF> intersectSegments(const QPointF& a, const QPointF& b, const QPointF& c, const QPointF& d) {
     double x1 = a.x(), y1 = a.y();
@@ -65,20 +50,4 @@ std::optional<QPointF> rc::Polygon::intersect(const Ray& ray) const {
     }
 
     return res;
-}
-
-void rc::Polygon::rebuildExtra() {
-    extra.clear();
-    for(int i = 0; i < vertices.size(); i++) {
-        for(int j = i + 1; j < vertices.size(); j++) {
-            QPointF a = vertices[i];
-            QPointF b = vertices[(i + 1) % vertices.size()];
-            QPointF c = vertices[j];
-            QPointF d = vertices[(j + 1) % vertices.size()];
-            std::optional<QPointF> p = intersectSegments(a, b, c, d);
-            if(p.has_value()) {
-                extra.push_back(p.value());
-            }
-        }
-    }
 }
