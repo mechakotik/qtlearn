@@ -6,6 +6,7 @@
 #include <QStringListModel>
 #include "add_book_dialog.hpp"
 #include "add_user_dialog.hpp"
+#include "find_book_dialog.hpp"
 #include "library.hpp"
 
 class MainWindow : public QMainWindow {
@@ -20,6 +21,7 @@ private slots:
     void showUserBooks();
     void showAddBookDialog();
     void deleteBook();
+    void showFindBookDialog();
     void addBookToUser();
 
 private:
@@ -29,6 +31,7 @@ private:
     Library lib;
     AddUserDialog addUserDialog;
     AddBookDialog addBookDialog;
+    FindBookDialog findBookDialog;
     QListView* usersList;
     QListView* booksList;
     QStringListModel* usersListModel;

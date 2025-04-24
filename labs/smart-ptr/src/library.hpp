@@ -20,13 +20,13 @@ public:
         users.erase(std::remove(users.begin(), users.end(), user), users.end());
     }
 
-    std::shared_ptr<Book> findBook(const QString& title, const QString& author) {
-        for(const std::shared_ptr<Book>& book : books) {
-            if((title.isEmpty() || book->getTitle() == title) && (author.isEmpty() || book->getAuthor() == author)) {
-                return book;
+    int findBook(const QString& title, const QString& author) {
+        for(int i = 0; i < static_cast<int>(books.size()); i++) {
+            if((title.isEmpty() || books[i]->getTitle() == title) && (author.isEmpty() || books[i]->getAuthor() == author)) {
+                return i;
             }
         }
-        return nullptr;
+        return -1;
     }
 
     void printBooks() {
@@ -61,8 +61,8 @@ inline void demoLibraryUsers() {
     lib.addBook(makeBook("title2", "author2", 2020));
 
     std::shared_ptr<User> user = makeUser("user1", 0);
-    user->addBook(lib.findBook("title1", ""));
-    user->addBook(lib.findBook("", "author2"));
+    user->addBook(lib.getBook(lib.findBook("title1", "")));
+    user->addBook(lib.getBook(lib.findBook("", "author2")));
     lib.addUser(user);
     lib.printUsers();
 }

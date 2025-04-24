@@ -9,7 +9,8 @@
 #include "add_book_dialog.hpp"
 #include "user_books_dialog.hpp"
 
-MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent), addUserDialog(this), addBookDialog(this) {
+MainWindow::MainWindow(QWidget* parent)
+    : QMainWindow(parent), addUserDialog(this), addBookDialog(this), findBookDialog(this) {
     setWindowTitle("Библиотека");
     QWidget* centralWidget = new QWidget(this);
     setCentralWidget(centralWidget);
@@ -37,9 +38,11 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent), addUserDialog(thi
     QHBoxLayout* booksButtonsLayout = new QHBoxLayout();
     QPushButton* bookAddButton = new QPushButton("Новая", this);
     QPushButton* bookDeleteButton = new QPushButton("Удалить", this);
+    QPushButton* bookFindButton = new QPushButton("Поиск", this);
     QPushButton* addBookToUserButton = new QPushButton("Добавить пользователю", this);
     booksButtonsLayout->addWidget(bookAddButton);
     booksButtonsLayout->addWidget(bookDeleteButton);
+    booksButtonsLayout->addWidget(bookFindButton);
     booksButtonsLayout->addWidget(addBookToUserButton);
 
     mainLayout->addWidget(usersListTitle);
@@ -54,6 +57,7 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent), addUserDialog(thi
     connect(userBooksButton, &QPushButton::clicked, this, &MainWindow::showUserBooks);
     connect(bookAddButton, &QPushButton::clicked, this, &MainWindow::showAddBookDialog);
     connect(bookDeleteButton, &QPushButton::clicked, this, &MainWindow::deleteBook);
+    connect(bookFindButton, &QPushButton::clicked, this, &MainWindow::showFindBookDialog);
     connect(addBookToUserButton, &QPushButton::clicked, this, &MainWindow::addBookToUser);
     updateUsersList();
     updateBooksList();
@@ -120,6 +124,19 @@ void MainWindow::deleteBook() {
     if(index.isValid()) {
         lib.removeBook(lib.getBook(index.row()));
         updateBooksList();
+    }
+}
+
+void MainWindow::showFindBookDialog() {
+    if(findBookDialog.exec() == QDialog::Accepted) {
+        QString title = findBookDialog.getTitle();
+        QString author = findBookDialog.getAuthor();
+        int res = lib.findBook(title, author);
+        if(res != -1) {
+            booksList->setCurrentIndex(booksListModel->index(res, 0));
+        } else {
+            QMessageBox::warning(this, "Ошибка", "Книга не найдена");
+        }
     }
 }
 
