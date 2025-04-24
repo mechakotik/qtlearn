@@ -1,9 +1,7 @@
 #ifndef BOOK_HPP
 #define BOOK_HPP
 
-#include <QDebug>
 #include <QString>
-#include <utility>
 
 class Book {
 public:
@@ -16,7 +14,7 @@ public:
 private:
     QString title;
     QString author;
-    int year = 0;
+    int year;
 };
 
 inline std::shared_ptr<Book> makeBook(const QString& title, const QString& author, int year) {

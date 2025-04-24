@@ -10,6 +10,8 @@ qt_add_executable(smart_ptr
         src/main.cpp
         src/main_window.cpp
         src/add_user_dialog.cpp
+        src/add_book_dialog.cpp
+        src/user_books_dialog.cpp
 )
 
 target_link_libraries(smart_ptr PRIVATE Qt6::Widgets)

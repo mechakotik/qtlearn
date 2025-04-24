@@ -1,31 +1,23 @@
 #ifndef LIBRARY_HPP
 #define LIBRARY_HPP
 
+#include <vector>
 #include "book.hpp"
 #include "user.hpp"
 
 class Library {
 public:
     void addBook(const std::shared_ptr<Book>& book) { books.push_back(book); }
-
     void removeBook(const std::shared_ptr<Book>& book) {
-        std::vector<std::shared_ptr<Book>> newBooks;
-        for(const std::shared_ptr<Book>& i : books) {
-            if(i != book) {
-                newBooks.push_back(i);
-            }
-        }
-        books = newBooks;
+        books.erase(std::remove(books.begin(), books.end(), book), books.end());
     }
+    std::shared_ptr<Book> getBook(int index) { return books[index]; }
+    std::vector<std::shared_ptr<Book>> getBooks() const { return books; }
 
-    std::shared_ptr<Book> bookAt(int index) {
-        return books.at(index);
-    }
+    void addUser(const std::shared_ptr<User>& user) { users.push_back(user); }
 
-    void printBooks() {
-        for(const std::shared_ptr<Book>& book : books) {
-            printBookInfo(book);
-        }
+    void removeUser(const std::shared_ptr<User>& user) {
+        users.erase(std::remove(users.begin(), users.end(), user), users.end());
     }
 
     std::shared_ptr<Book> findBook(const QString& title, const QString& author) {
@@ -37,25 +29,10 @@ public:
         return nullptr;
     }
 
-    void findBookAndPrint(const QString& title, const QString& author) {
-        std::shared_ptr<Book> book = findBook(title, author);
-        if(book != nullptr) {
+    void printBooks() {
+        for(const std::shared_ptr<Book>& book : books) {
             printBookInfo(book);
-        } else {
-            qDebug() << "Book not found";
         }
-    }
-
-    void addUser(const std::shared_ptr<User>& user) { users.push_back(user); }
-
-    void removeUser(const std::shared_ptr<User>& user) {
-        std::vector<std::shared_ptr<User>> newUsers;
-        for(const std::shared_ptr<User>& i : users) {
-            if(i != user) {
-                newUsers.push_back(i);
-            }
-        }
-        users = newUsers;
     }
 
     void printUsers() {
@@ -63,6 +40,8 @@ public:
             printUserInfo(i);
         }
     }
+    std::shared_ptr<User> getUser(int index) { return users[index]; }
+    std::vector<std::shared_ptr<User>> getUsers() const { return users; }
 
 private:
     std::vector<std::shared_ptr<Book>> books;

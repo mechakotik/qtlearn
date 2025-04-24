@@ -4,26 +4,25 @@
 #include <QPushButton>
 #include <QVBoxLayout>
 
-AddUserDialog::AddUserDialog(QWidget* parent) : QDialog(parent) {
+AddUserDialog::AddUserDialog(QWidget* parent) : QDialog(parent), lineEdit(new QLineEdit(this)) {
     setWindowTitle("Добавить пользователя");
     QVBoxLayout* layout = new QVBoxLayout(this);
 
     QLabel* label = new QLabel("Имя", this);
     layout->addWidget(label);
-
-    QLineEdit* lineEdit = new QLineEdit(this);
     layout->addWidget(lineEdit);
 
     QHBoxLayout* buttonLayout = new QHBoxLayout();
-    QPushButton* undoButton = new QPushButton("Отмена", this);
+    QPushButton* cancelButton = new QPushButton("Отмена", this);
     QPushButton* okButton = new QPushButton("ОК", this);
-    buttonLayout->addWidget(undoButton);
+    buttonLayout->addWidget(cancelButton);
     buttonLayout->addWidget(okButton);
-
     layout->addLayout(buttonLayout);
-    setMinimumHeight(layout->sizeHint().height());
-    setMaximumHeight(layout->sizeHint().height());
 
     connect(okButton, &QPushButton::clicked, this, &AddUserDialog::accept);
-    connect(okButton, &QPushButton::clicked, this, &AddUserDialog::reject);
+    connect(cancelButton, &QPushButton::clicked, this, &AddUserDialog::reject);
+}
+
+QString AddUserDialog::getUserName() const {
+    return lineEdit->text();
 }

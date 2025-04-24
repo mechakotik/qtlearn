@@ -2,32 +2,26 @@
 #define USER_HPP
 
 #include <QString>
+#include <vector>
 #include "book.hpp"
 
 class User {
 public:
     User(const QString& name, int id) : name(name), id(id) {}
 
-    [[nodiscard]] QString getName() const { return name; }
-    [[nodiscard]] int getId() const { return id; }
-    [[nodiscard]] const std::vector<std::shared_ptr<Book>>& getBooks() const { return books; }
+    QString getName() const { return name; }
+    int getId() const { return id; }
+    std::vector<std::shared_ptr<Book>> getBooks() const { return books; }
 
     void addBook(const std::shared_ptr<Book>& book) { books.push_back(book); }
-
     void removeBook(const std::shared_ptr<Book>& book) {
-        std::vector<std::shared_ptr<Book>> newBooks;
-        for(const auto& i : books) {
-            if(i != book) {
-                newBooks.push_back(i);
-            }
-        }
-        books = newBooks;
+        books.erase(std::remove(books.begin(), books.end(), book), books.end());
     }
 
 private:
-    std::vector<std::shared_ptr<Book>> books;
     QString name;
     int id;
+    std::vector<std::shared_ptr<Book>> books;
 };
 
 inline std::shared_ptr<User> makeUser(const QString& name, int id) {
