@@ -33,6 +33,7 @@ private:
     QListView* booksList;
     QStringListModel* usersListModel;
     QStringListModel* booksListModel;
+    int topId = 0;
 };
 
 #endif // MAIN_WINDOW_HPP

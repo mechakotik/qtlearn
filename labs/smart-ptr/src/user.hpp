@@ -9,11 +9,21 @@ class User {
 public:
     User(const QString& name, int id) : name(name), id(id) {}
 
-    QString getName() const { return name; }
-    int getId() const { return id; }
-    std::vector<std::shared_ptr<Book>> getBooks() const { return books; }
+    [[nodiscard]] QString getName() const { return name; }
+    [[nodiscard]] int getId() const { return id; }
+    [[nodiscard]] std::vector<std::shared_ptr<Book>> getBooks() const { return books; }
+    [[nodiscard]] std::shared_ptr<Book> getBookAt(int index) const { return books[index]; }
 
-    void addBook(const std::shared_ptr<Book>& book) { books.push_back(book); }
+    void addBook(const std::shared_ptr<Book>& book) {
+        if(!hasBook(book)) {
+            books.push_back(book);
+        }
+    }
+
+    bool hasBook(const std::shared_ptr<Book>& book) {
+        return std::find(books.begin(), books.end(), book) != books.end();
+    }
+
     void removeBook(const std::shared_ptr<Book>& book) {
         books.erase(std::remove(books.begin(), books.end(), book), books.end());
     }

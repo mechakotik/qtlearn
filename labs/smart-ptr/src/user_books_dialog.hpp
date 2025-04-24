@@ -2,6 +2,8 @@
 #define USER_BOOKS_DIALOG_HPP
 
 #include <QDialog>
+#include <QListView>
+#include <QStringListModel>
 #include "user.hpp"
 
 class UserBooksDialog : public QDialog {
@@ -12,6 +14,14 @@ public:
 
 private:
     std::shared_ptr<User> user;
+    void rebuildBooksList();
+
+    QListView* listView;
+    QStringListModel* model;
+    QStringList books;
+
+private slots:
+    void deleteCurrentBook();
 };
 
 #endif // USER_BOOKS_DIALOG_HPP

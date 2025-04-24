@@ -62,7 +62,7 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent), addUserDialog(thi
 void MainWindow::updateUsersList() {
     QStringList userList;
     for(const auto& user : lib.getUsers()) {
-        userList << user->getName();
+        userList << QString::number(user->getId()) + " " + user->getName();
     }
     usersListModel->setStringList(userList);
 }
@@ -70,7 +70,7 @@ void MainWindow::updateUsersList() {
 void MainWindow::updateBooksList() {
     QStringList bookList;
     for(const auto& book : lib.getBooks()) {
-        bookList << book->getTitle();
+        bookList << book->getTitle() + " (" + book->getAuthor() + ", " + QString::number(book->getYear()) + ")";
     }
     booksListModel->setStringList(bookList);
 }
@@ -79,8 +79,9 @@ void MainWindow::showAddUserDialog() {
     if(addUserDialog.exec() == QDialog::Accepted) {
         QString name = addUserDialog.getUserName();
         if(!name.isEmpty()) {
-            lib.addUser(std::make_shared<User>(name, lib.getUsers().size() + 1));
+            lib.addUser(makeUser(name, topId));
             updateUsersList();
+            topId++;
         }
     }
 }
@@ -129,8 +130,5 @@ void MainWindow::addBookToUser() {
         auto user = lib.getUser(userIndex.row());
         auto book = lib.getBook(bookIndex.row());
         user->addBook(book);
-        lib.removeBook(book);
-        updateUsersList();
-        updateBooksList();
     }
 }
