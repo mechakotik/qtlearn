@@ -11,6 +11,11 @@ public:
     explicit AddUserDialog(QWidget* parent = nullptr);
     QString getUserName() const;
 
+    void showEvent(QShowEvent *event) override {
+        lineEdit->setText("");
+        QDialog::showEvent(event);
+    }
+
 private:
     QLineEdit* lineEdit;
 };

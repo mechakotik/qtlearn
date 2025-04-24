@@ -12,6 +12,12 @@ public:
     [[nodiscard]] QString getTitle() const { return title->text(); }
     [[nodiscard]] QString getAuthor() const { return author->text(); }
 
+    void showEvent(QShowEvent* event) override {
+        title->setText("");
+        author->setText("");
+        QDialog::showEvent(event);
+    }
+
 private:
     QLineEdit* title;
     QLineEdit* author;

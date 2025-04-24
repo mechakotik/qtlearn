@@ -13,6 +13,13 @@ public:
     QString getAuthor() const;
     int getYear() const;
 
+    void showEvent(QShowEvent* event) override {
+        titleEdit->setText("");
+        authorEdit->setText("");
+        yearEdit->setText("");
+        QDialog::showEvent(event);
+    }
+
 private:
     QLineEdit* titleEdit;
     QLineEdit* authorEdit;
