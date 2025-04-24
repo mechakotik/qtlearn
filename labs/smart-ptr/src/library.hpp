@@ -67,4 +67,14 @@ inline void demoLibraryUsers() {
     lib.printUsers();
 }
 
+inline void demoMakeShared() {
+    Library lib;
+
+    std::shared_ptr<User> user1 = std::make_shared<User>("user1", 0);
+    std::shared_ptr<User> user2 = std::allocate_shared<User>(std::allocator<User>(), "user2", 0);
+
+    lib.addUser(user1);
+    lib.addUser(user2);
+}
+
 #endif // LIBRARY_HPP
