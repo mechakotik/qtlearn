@@ -1,0 +1,12 @@
+[test]
+name = "Демо"
+
+[[questions]]
+text = "Кто это?"
+image = "maxwell_cat.png"
+variants = [
+	{ text="Кот Максвелл", score=10 },
+	{ text="Кот", score=5 },
+	{ text="Что?" }
+]
+
