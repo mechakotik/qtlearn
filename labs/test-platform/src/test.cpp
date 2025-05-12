@@ -32,11 +32,20 @@ void Test::loadFromToml(const toml::value& table, const std::filesystem::path& p
             q->setProperty("image", QString::fromStdString("file:./" + imagePath.string()));
         }
         if(question.contains("variants")) {
+            int maxScore = 0;
+            for(const toml::value& variant : question.at("variants").as_array()) {
+                if(variant.contains("score")) {
+                    maxScore = std::max(maxScore, static_cast<int>(variant.at("score").as_integer()));
+                }
+            }
             for(const toml::value& variant : question.at("variants").as_array()) {
                 Variant* var = new Variant(this);
                 var->setProperty("text", QString::fromStdString(variant.at("text").as_string()));
                 if(variant.contains("score")) {
                     var->setProperty("score", static_cast<int>(variant.at("score").as_integer()));
+                    if(static_cast<int>(variant.at("score").as_integer()) == maxScore) {
+                        var->setProperty("correct", true);
+                    }
                 }
                 q->addVariant(var);
             }

@@ -145,7 +145,10 @@ ApplicationWindow {
                 delegate: ItemDelegate {
                     width: ListView.view.width
                     hoverEnabled: true
-                    onClicked: stack.push(questionView, { test: listView.currentIndex, question: 0 })
+                    onClicked: {
+                        testpl.tests[listView.currentIndex].questions[0].checked = false
+                        stack.push(questionView, { test: listView.currentIndex, question: 0 })
+                    }
                     contentItem: Label {
                         text: modelData.name
                         rightPadding: 100 - contentWidth
@@ -187,9 +190,43 @@ ApplicationWindow {
                 }
                 Repeater {
                     model: testpl.tests[test].questions[question].variants
+                    id: repeater
                     RadioButton {
                         Layout.fillWidth: true
                         text: modelData.text
+                        Material.accent: {
+                            if(!testpl.tests[test].questions[question].checked) {
+                                return Material.Grey
+                            }
+                            if(modelData.correct) {
+                                return Material.Green
+                            }
+                            if(modelData.score !== 0) {
+                                return Material.Yellow
+                            }
+                            return Material.Red
+                        }
+                        Material.foreground: {
+                            if(!testpl.tests[test].questions[question].checked) {
+                                return "#ffffff"
+                            }
+                            if(modelData.correct) {
+                                return "#a5d6a7"
+                            }
+                            if(modelData.score !== 0) {
+                                return "#fff59d"
+                            }
+                            if(!checked) {
+                                return "#ffffff"
+                            }
+                            return "#ef9a9a";
+                        }
+                        // hack to forbid changing answer after it is checked
+                        MouseArea {
+                            anchors.fill: parent
+                            onPressed: (mouse) => { mouse.accepted = testpl.tests[test].questions[question].checked; }
+                        }
+                        hoverEnabled: !testpl.tests[test].questions[question].checked
                     }
                 }
                 Item {
@@ -197,7 +234,22 @@ ApplicationWindow {
                 }
                 Button {
                     Layout.alignment: Qt.AlignRight
-                    text: "ПРОВЕРИТЬ"
+                    Layout.preferredWidth: 128
+                    text: (testpl.tests[test].questions[question].checked ? "ДАЛЕЕ" : "ПРОВЕРИТЬ")
+                    onClicked: {
+                        if(!testpl.tests[test].questions[question].checked) {
+                            testpl.tests[test].questions[question].checked = true
+                        } else {
+                            console.log(question + 1)
+                            console.log(testpl.tests[test].questions.size)
+                            if(question + 1 === testpl.tests[test].questions.length) {
+                                stack.pop()
+                            } else {
+                                testpl.tests[test].questions[question + 1].checked = false
+                                stack.replace(questionView, { test: test, question: question + 1 })
+                            }
+                        }
+                    }
                 }
             }
         }
