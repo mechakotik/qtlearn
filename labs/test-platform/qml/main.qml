@@ -3,6 +3,7 @@ import QtQuick.Layouts
 import QtQuick.Dialogs
 import QtQuick.Controls
 import QtQuick.Controls.Material
+import QtMultimedia
 import TestPlatform.TestPlatform
 
 ApplicationWindow {
@@ -29,6 +30,15 @@ ApplicationWindow {
         id: errorDialog
     }
     property var errorDialogExport: errorDialog
+
+    SoundEffect {
+        id: correctSound
+        source: "/res/sounds/correct.wav"
+    }
+    SoundEffect {
+        id: wrongSound
+        source: "/res/sounds/wrong.wav"
+    }
 
     header: ToolBar {
         RowLayout {
@@ -168,6 +178,16 @@ ApplicationWindow {
             property var test
             property var question
 
+            function getSelectedVariant() {
+                for(var i = 0; i < repeater.count; i++) {
+                    var radioButton = repeater.itemAt(i);
+                    if (radioButton.checked) {
+                        return i;
+                    }
+                }
+                return -1;
+            }
+
             ColumnLayout {
                 anchors.fill: parent
                 anchors.margins: 20
@@ -183,11 +203,13 @@ ApplicationWindow {
                         if (status === Image.Error) errorDialog.show("Ошибка загрузки изображения " + source)
                     }
                 }
+
                 Label {
                     Layout.alignment: Qt.AlignCenter
                     text: testpl.tests[test].questions[question].text
                     enabled: text !== ""
                 }
+
                 Repeater {
                     model: testpl.tests[test].questions[question].variants
                     id: repeater
@@ -226,18 +248,28 @@ ApplicationWindow {
                             anchors.fill: parent
                             onPressed: (mouse) => { mouse.accepted = testpl.tests[test].questions[question].checked; }
                         }
+                        onClicked: checkButton.enabled = true
                         hoverEnabled: !testpl.tests[test].questions[question].checked
                     }
                 }
+
                 Item {
                     Layout.fillHeight: true
                 }
+
                 Button {
+                    id: checkButton
                     Layout.alignment: Qt.AlignRight
                     Layout.preferredWidth: 128
                     text: (testpl.tests[test].questions[question].checked ? "ДАЛЕЕ" : "ПРОВЕРИТЬ")
+                    enabled: false
                     onClicked: {
                         if(!testpl.tests[test].questions[question].checked) {
+                            if(testpl.tests[test].questions[question].variants[getSelectedVariant()].score !== 0) {
+                                correctSound.play()
+                            } else {
+                                wrongSound.play()
+                            }
                             testpl.tests[test].questions[question].checked = true
                         } else {
                             if(question + 1 === testpl.tests[test].questions.length) {

@@ -3,5 +3,7 @@
         <file>qtquickcontrols2.conf</file>
         <file>res/icons/close.svg</file>
         <file>res/icons/hide.svg</file>
+        <file>res/sounds/correct.wav</file>
+        <file>res/sounds/wrong.wav</file>
     </qresource>
 </RCC>
