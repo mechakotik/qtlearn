@@ -240,8 +240,6 @@ ApplicationWindow {
                         if(!testpl.tests[test].questions[question].checked) {
                             testpl.tests[test].questions[question].checked = true
                         } else {
-                            console.log(question + 1)
-                            console.log(testpl.tests[test].questions.size)
                             if(question + 1 === testpl.tests[test].questions.length) {
                                 stack.pop()
                             } else {
