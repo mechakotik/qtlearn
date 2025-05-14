@@ -157,7 +157,7 @@ ApplicationWindow {
                     hoverEnabled: true
                     onClicked: {
                         testpl.tests[listView.currentIndex].questions[0].checked = false
-                        stack.push(questionView, { test: listView.currentIndex, question: 0 })
+                        stack.push(testView, { test: listView.currentIndex })
                     }
                     contentItem: Label {
                         text: modelData.name
@@ -172,125 +172,201 @@ ApplicationWindow {
     }
 
     Component {
-        id: questionView
+        id: testView
 
         Item {
             property var test
-            property var question
-
-            function getSelectedVariant() {
-                for(var i = 0; i < variants.count; i++) {
-                    var radioButton = variants.itemAt(i);
-                    if (radioButton.checked) {
-                        return i;
-                    }
-                }
-                return -1;
-            }
+            property var question: 0
 
             ColumnLayout {
                 anchors.fill: parent
                 anchors.margins: 20
 
-                Image {
-                    source: testpl.tests[test].questions[question].image
-                    Layout.maximumWidth: 400
-                    Layout.maximumHeight: 300
-                    Layout.alignment: Qt.AlignCenter
-                    fillMode: Image.PreserveAspectFit
-                    mipmap: true
-                    onStatusChanged: {
-                        if (status === Image.Error) errorDialog.show("Ошибка загрузки изображения " + source)
-                    }
+                ProgressBar {
+                    Layout.fillWidth: true
+                    value: question / testpl.tests[test].questions.length
                 }
 
-                Label {
-                    Layout.alignment: Qt.AlignCenter
-                    text: testpl.tests[test].questions[question].text
-                    enabled: text !== ""
-                }
-
-                Repeater {
-                    model: testpl.tests[test].questions[question].variants
-                    id: variants
-
-                    RadioButton {
-                        Layout.fillWidth: true
-                        text: modelData.text
-                        Material.accent: {
-                            if(!testpl.tests[test].questions[question].checked) {
-                                return Material.Purple
-                            }
-                            if(modelData.correct) {
-                                return Material.Green
-                            }
-                            if(modelData.score !== 0) {
-                                return Material.Yellow
-                            }
-                            return Material.Red
-                        }
-                        Material.foreground: {
-                            if(!testpl.tests[test].questions[question].checked) {
-                                return "#ffffff"
-                            }
-                            if(modelData.correct) {
-                                return "#a5d6a7"
-                            }
-                            if(modelData.score !== 0) {
-                                return "#fff59d"
-                            }
-                            if(!checked) {
-                                return "#ffffff"
-                            }
-                            return "#ef9a9a";
-                        }
-                        // hack to forbid changing answer after it is checked
-                        MouseArea {
-                            anchors.fill: parent
-                            onPressed: (mouse) => { mouse.accepted = testpl.tests[test].questions[question].checked; }
-                        }
-                        onClicked: checkButton.enabled = true
-                        hoverEnabled: !testpl.tests[test].questions[question].checked
-                    }
-                }
-
-                Repeater {
-                    model: testpl.tests[test].questions[question].checkboxes
-                    id: checkboxes
-
-                    CheckBox {
-                        Layout.fillWidth: true
-                        text: modelData.text
-                        Material.accent: {
-                            if(!testpl.tests[test].questions[question].checked) {
-                                return Material.Purple
-                            }
-                            if(modelData.need) {
-                                return Material.Green
-                            }
-                            return Material.Red
-                        }
-                        Material.foreground: {
-                            if(!testpl.tests[test].questions[question].checked) {
-                                return "#ffffff"
-                            }
-                            if(modelData.need) {
-                                return "#a5d6a7"
-                            }
-                            return "#ef9a9a";
-                        }
-                        // hack to forbid changing answer after it is checked
-                        MouseArea {
-                            anchors.fill: parent
-                            onPressed: (mouse) => { mouse.accepted = testpl.tests[test].questions[question].checked; }
-                        }
-                        onClicked: checkButton.enabled = true
-                        hoverEnabled: !testpl.tests[test].questions[question].checked
-                    }
-                }
-
-                Item {
+                StackView {
+                    id: questionStack
+                    Layout.fillWidth: true
                     Layout.fillHeight: true
+                    initialItem: questionView
+
+                    pushEnter: Transition {
+                        PropertyAnimation {
+                            property: "opacity"
+                            from: 0
+                            to: 1
+                            duration: 100
+                        }
+                        PropertyAnimation {
+                            property: "x"
+                            from: 100
+                            to: 0
+                            duration: 100
+                        }
+                    }
+                    pushExit: Transition {
+                        PropertyAnimation {
+                            property: "opacity"
+                            from: 1
+                            to: 0
+                            duration: 100
+                        }
+                        PropertyAnimation {
+                            property: "x"
+                            from: 0
+                            to: -100
+                            duration: 100
+                        }
+                    }
+                    popEnter: Transition {
+                        PropertyAnimation {
+                            property: "opacity"
+                            from: 0
+                            to: 1
+                            duration: 100
+                        }
+                        PropertyAnimation {
+                            property: "x"
+                            from: -100
+                            to: 0
+                            duration: 100
+                        }
+                    }
+                    popExit: Transition {
+                        PropertyAnimation {
+                            property: "opacity"
+                            from: 1
+                            to: 0
+                            duration: 100
+                        }
+                        PropertyAnimation {
+                            property: "x"
+                            from: 0
+                            to: 100
+                            duration: 100
+                        }
+                    }
+                }
+
+                Component {
+                    id: questionView
+
+                    Item {
+                        function getSelectedVariant() {
+                            for(var i = 0; i < variants.count; i++) {
+                                var radioButton = variants.itemAt(i);
+                                if (radioButton.checked) {
+                                    return i;
+                                }
+                            }
+                            return -1;
+                        }
+
+                        ColumnLayout {
+                            anchors.fill: parent
+                            anchors.margins: 20
+
+                            Image {
+                                source: testpl.tests[test].questions[question].image
+                                Layout.maximumWidth: 400
+                                Layout.maximumHeight: 300
+                                Layout.alignment: Qt.AlignCenter
+                                fillMode: Image.PreserveAspectFit
+                                mipmap: true
+                                onStatusChanged: {
+                                    if (status === Image.Error) errorDialog.show("Ошибка загрузки изображения " + source)
+                                }
+                            }
+
+                            Label {
+                                Layout.alignment: Qt.AlignCenter
+                                text: testpl.tests[test].questions[question].text
+                                enabled: text !== ""
+                            }
+
+                            Repeater {
+                                model: testpl.tests[test].questions[question].variants
+                                id: variants
+
+                                RadioButton {
+                                    Layout.fillWidth: true
+                                    text: modelData.text
+                                    Material.accent: {
+                                        if(!testpl.tests[test].questions[question].checked) {
+                                            return Material.Purple
+                                        }
+                                        if(modelData.correct) {
+                                            return Material.Green
+                                        }
+                                        if(modelData.score !== 0) {
+                                            return Material.Yellow
+                                        }
+                                        return Material.Red
+                                    }
+                                    Material.foreground: {
+                                        if(!testpl.tests[test].questions[question].checked) {
+                                            return "#ffffff"
+                                        }
+                                        if(modelData.correct) {
+                                            return "#a5d6a7"
+                                        }
+                                        if(modelData.score !== 0) {
+                                            return "#fff59d"
+                                        }
+                                        if(!checked) {
+                                            return "#ffffff"
+                                        }
+                                        return "#ef9a9a";
+                                    }
+                                    // hack to forbid changing answer after it is checked
+                                    MouseArea {
+                                        anchors.fill: parent
+                                        onPressed: (mouse) => { mouse.accepted = testpl.tests[test].questions[question].checked; }
+                                    }
+                                    onClicked: checkButton.enabled = true
+                                    hoverEnabled: !testpl.tests[test].questions[question].checked
+                                }
+                            }
+
+                            Repeater {
+                                model: testpl.tests[test].questions[question].checkboxes
+                                id: checkboxes
+
+                                CheckBox {
+                                    Layout.fillWidth: true
+                                    text: modelData.text
+                                    Material.accent: {
+                                        if(!testpl.tests[test].questions[question].checked) {
+                                            return Material.Purple
+                                        }
+                                        if(modelData.need) {
+                                            return Material.Green
+                                        }
+                                        return Material.Red
+                                    }
+                                    Material.foreground: {
+                                        if(!testpl.tests[test].questions[question].checked) {
+                                            return "#ffffff"
+                                        }
+                                        if(modelData.need) {
+                                            return "#a5d6a7"
+                                        }
+                                        return "#ef9a9a";
+                                    }
+                                    // hack to forbid changing answer after it is checked
+                                    MouseArea {
+                                        anchors.fill: parent
+                                        onPressed: (mouse) => { mouse.accepted = testpl.tests[test].questions[question].checked; }
+                                    }
+                                    onClicked: checkButton.enabled = true
+                                    hoverEnabled: !testpl.tests[test].questions[question].checked
+                                }
+                            }
+                        }
+                    }
                 }
 
                 Button {
@@ -304,7 +380,7 @@ ApplicationWindow {
                             if(testpl.tests[test].questions[question].checkboxes.length !== 0) {
                                 correctSound.play()
                             } else {
-                                if(testpl.tests[test].questions[question].variants[getSelectedVariant()].score !== 0) {
+                                if(testpl.tests[test].questions[question].variants[questionStack.currentItem.getSelectedVariant()].score !== 0) {
                                     correctSound.play()
                                 } else {
                                     wrongSound.play()
@@ -316,7 +392,8 @@ ApplicationWindow {
                                 stack.pop()
                             } else {
                                 testpl.tests[test].questions[question + 1].checked = false
-                                stack.replace(questionView, { test: test, question: question + 1 })
+                                question += 1
+                                questionStack.replace(questionView)
                             }
                         }
                     }
