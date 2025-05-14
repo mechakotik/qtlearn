@@ -50,6 +50,19 @@ void Test::loadFromToml(const toml::value& table, const std::filesystem::path& p
                 q->addVariant(var);
             }
         }
+        if(question.contains("checkboxes")) {
+            for(const toml::value& checkbox : question.at("checkboxes").as_array()) {
+                Checkbox* cb = new Checkbox(this);
+                cb->setProperty("text", QString::fromStdString(checkbox.at("text").as_string()));
+                if(checkbox.contains("need")) {
+                    cb->setProperty("need", checkbox.at("need").as_boolean());
+                }
+                if(checkbox.contains("score")) {
+                    cb->setProperty("score", static_cast<int>(checkbox.at("score").as_integer()));
+                }
+                q->addCheckbox(cb);
+            }
+        }
         questions.push_back(q);
     }
 

@@ -16,9 +16,10 @@ qt_add_executable(test-platform
         src/test_platform.cpp
         src/test.cpp
         src/question.cpp
-        src/variant.cpp
         src/resource_manager.cpp
         src/error.cpp
+        src/variant.hpp
+        src/checkbox.hpp
 )
 
 qt_add_qml_module(test-platform

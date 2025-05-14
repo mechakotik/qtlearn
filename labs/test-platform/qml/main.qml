@@ -16,7 +16,7 @@ ApplicationWindow {
     Material.theme: Material.Dark
     Material.primary: "#3f3c40"
     Material.background: "#1c1b1f"
-    Material.accent: Material.Grey
+    Material.accent: Material.Purple
 
     TestPlatform {
         id: testpl
@@ -179,8 +179,8 @@ ApplicationWindow {
             property var question
 
             function getSelectedVariant() {
-                for(var i = 0; i < repeater.count; i++) {
-                    var radioButton = repeater.itemAt(i);
+                for(var i = 0; i < variants.count; i++) {
+                    var radioButton = variants.itemAt(i);
                     if (radioButton.checked) {
                         return i;
                     }
@@ -212,13 +212,14 @@ ApplicationWindow {
 
                 Repeater {
                     model: testpl.tests[test].questions[question].variants
-                    id: repeater
+                    id: variants
+
                     RadioButton {
                         Layout.fillWidth: true
                         text: modelData.text
                         Material.accent: {
                             if(!testpl.tests[test].questions[question].checked) {
-                                return Material.Grey
+                                return Material.Purple
                             }
                             if(modelData.correct) {
                                 return Material.Green
@@ -253,6 +254,41 @@ ApplicationWindow {
                     }
                 }
 
+                Repeater {
+                    model: testpl.tests[test].questions[question].checkboxes
+                    id: checkboxes
+
+                    CheckBox {
+                        Layout.fillWidth: true
+                        text: modelData.text
+                        Material.accent: {
+                            if(!testpl.tests[test].questions[question].checked) {
+                                return Material.Purple
+                            }
+                            if(modelData.need) {
+                                return Material.Green
+                            }
+                            return Material.Red
+                        }
+                        Material.foreground: {
+                            if(!testpl.tests[test].questions[question].checked) {
+                                return "#ffffff"
+                            }
+                            if(modelData.need) {
+                                return "#a5d6a7"
+                            }
+                            return "#ef9a9a";
+                        }
+                        // hack to forbid changing answer after it is checked
+                        MouseArea {
+                            anchors.fill: parent
+                            onPressed: (mouse) => { mouse.accepted = testpl.tests[test].questions[question].checked; }
+                        }
+                        onClicked: checkButton.enabled = true
+                        hoverEnabled: !testpl.tests[test].questions[question].checked
+                    }
+                }
+
                 Item {
                     Layout.fillHeight: true
                 }
@@ -262,13 +298,17 @@ ApplicationWindow {
                     Layout.alignment: Qt.AlignRight
                     Layout.preferredWidth: 128
                     text: (testpl.tests[test].questions[question].checked ? "ДАЛЕЕ" : "ПРОВЕРИТЬ")
-                    enabled: false
+                    enabled: !testpl.tests[test].questions[question].checkboxes.empty
                     onClicked: {
                         if(!testpl.tests[test].questions[question].checked) {
-                            if(testpl.tests[test].questions[question].variants[getSelectedVariant()].score !== 0) {
+                            if(testpl.tests[test].questions[question].checkboxes.length !== 0) {
                                 correctSound.play()
                             } else {
-                                wrongSound.play()
+                                if(testpl.tests[test].questions[question].variants[getSelectedVariant()].score !== 0) {
+                                    correctSound.play()
+                                } else {
+                                    wrongSound.play()
+                                }
                             }
                             testpl.tests[test].questions[question].checked = true
                         } else {
