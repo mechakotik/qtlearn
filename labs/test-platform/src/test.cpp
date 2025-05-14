@@ -57,10 +57,12 @@ void Test::loadFromToml(const toml::value& table, const std::filesystem::path& p
                 if(checkbox.contains("need")) {
                     cb->setProperty("need", checkbox.at("need").as_boolean());
                 }
-                if(checkbox.contains("score")) {
-                    cb->setProperty("score", static_cast<int>(checkbox.at("score").as_integer()));
-                }
                 q->addCheckbox(cb);
+            }
+        }
+        if(question.contains("scores")) {
+            for(const toml::value& score : question.at("scores").as_array()) {
+                q->addScore(static_cast<int>(score.as_integer()));
             }
         }
         questions.push_back(q);

@@ -162,14 +162,14 @@ ApplicationWindow {
                             return -1;
                         }
 
-                        function getCheckboxesScore() {
-                            var sum = 0
-                            for(var i = 0; i < testpl.tests[test].questions[question].checkboxes.length; i++) {
-                                if(checkboxes.itemAt(i).checked === testpl.tests[test].questions[question].checkboxes[i].need) {
-                                    sum += testpl.tests[test].questions[question].checkboxes[i].score
+                        function countWrongCheckboxes() {
+                            var cnt = 0
+                            for(var i = 0; i < testpl.tests[test].questions[viewQuestion].checkboxes.length; i++) {
+                                if(checkboxes.itemAt(i).checked !== testpl.tests[test].questions[viewQuestion].checkboxes[i].need) {
+                                    cnt++
                                 }
                             }
-                            return sum
+                            return cnt
                         }
 
                         ColumnLayout {
@@ -180,7 +180,7 @@ ApplicationWindow {
                                 source: testpl.tests[test].questions[viewQuestion].image
                                 Layout.maximumWidth: 400
                                 Layout.maximumHeight: 300
-                                Layout.alignment: Qt.AlignCenter1
+                                Layout.alignment: Qt.AlignCenter
                                 fillMode: Image.PreserveAspectFit
                                 mipmap: true
                                 onStatusChanged: {
@@ -272,6 +272,10 @@ ApplicationWindow {
                                     hoverEnabled: !testpl.tests[test].questions[viewQuestion].checked
                                 }
                             }
+
+                            Item {
+                                Layout.fillHeight: true
+                            }
                         }
                     }
                 }
@@ -285,8 +289,13 @@ ApplicationWindow {
                     onClicked: {
                         if(!testpl.tests[test].questions[question].checked) {
                             if(testpl.tests[test].questions[question].checkboxes.length !== 0) {
-                                correctSound.play()
-                                score += questionStack.currentItem.getCheckboxesScore()
+                                var cnt = questionStack.currentItem.countWrongCheckboxes()
+                                if(cnt < testpl.tests[test].questions[question].scores.length) {
+                                    correctSound.play()
+                                    score += testpl.tests[test].questions[question].scores[cnt]
+                                } else {
+                                    wrongSound.play()
+                                }
                             } else {
                                 if(testpl.tests[test].questions[question].variants[questionStack.currentItem.getSelectedVariant()].score !== 0) {
                                     correctSound.play()

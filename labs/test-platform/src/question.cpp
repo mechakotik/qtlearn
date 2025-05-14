@@ -9,3 +9,8 @@ void Question::addCheckbox(Checkbox* checkbox) {
     checkboxes.push_back(checkbox);
     emit checkboxesChanged();
 }
+
+void Question::addScore(int score) {
+    scores.push_back(score);
+    emit scoresChanged();
+}

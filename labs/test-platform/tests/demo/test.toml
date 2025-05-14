@@ -13,11 +13,12 @@ variants = [
 
 [[questions]]
 text = "Выберите верные утверждения"
+scores = [10, 5]
 checkboxes = [
-	{ text="correct", need=true, score=2 },
-	{ text="incorrect", need=false, score=2 },
-	{ text="correct", need=true, score=2 },
-	{ text="incorrect", need=false, score=2 },
-	{ text="incorrect", need=false, score=2 }
+	{ text="correct", need=true },
+	{ text="incorrect", need=false },
+	{ text="correct", need=true },
+	{ text="incorrect", need=false },
+	{ text="incorrect", need=false }
 ]
 
