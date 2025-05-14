@@ -83,63 +83,6 @@ ApplicationWindow {
         id: stack
         anchors.fill: parent
         initialItem: menuView
-
-        pushEnter: Transition {
-            PropertyAnimation {
-                property: "opacity"
-                from: 0
-                to: 1
-                duration: 100
-            }
-            PropertyAnimation {
-                property: "x"
-                from: 100
-                to: 0
-                duration: 100
-            }
-        }
-        pushExit: Transition {
-            PropertyAnimation {
-                property: "opacity"
-                from: 1
-                to: 0
-                duration: 100
-            }
-            PropertyAnimation {
-                property: "x"
-                from: 0
-                to: -100
-                duration: 100
-            }
-        }
-        popEnter: Transition {
-            PropertyAnimation {
-                property: "opacity"
-                from: 0
-                to: 1
-                duration: 100
-            }
-            PropertyAnimation {
-                property: "x"
-                from: -100
-                to: 0
-                duration: 100
-            }
-        }
-        popExit: Transition {
-            PropertyAnimation {
-                property: "opacity"
-                from: 1
-                to: 0
-                duration: 100
-            }
-            PropertyAnimation {
-                property: "x"
-                from: 0
-                to: 100
-                duration: 100
-            }
-        }
     }
 
     Component {
@@ -177,10 +120,19 @@ ApplicationWindow {
         Item {
             property var test
             property var question: 0
+            property var score: 0
 
             ColumnLayout {
                 anchors.fill: parent
                 anchors.margins: 20
+
+                RowLayout {
+                    Layout.fillWidth: true
+
+                    Label {
+                        text: "Баллы: " + score
+                    }
+                }
 
                 ProgressBar {
                     Layout.fillWidth: true
@@ -192,69 +144,14 @@ ApplicationWindow {
                     Layout.fillWidth: true
                     Layout.fillHeight: true
                     initialItem: questionView
-
-                    pushEnter: Transition {
-                        PropertyAnimation {
-                            property: "opacity"
-                            from: 0
-                            to: 1
-                            duration: 100
-                        }
-                        PropertyAnimation {
-                            property: "x"
-                            from: 100
-                            to: 0
-                            duration: 100
-                        }
-                    }
-                    pushExit: Transition {
-                        PropertyAnimation {
-                            property: "opacity"
-                            from: 1
-                            to: 0
-                            duration: 100
-                        }
-                        PropertyAnimation {
-                            property: "x"
-                            from: 0
-                            to: -100
-                            duration: 100
-                        }
-                    }
-                    popEnter: Transition {
-                        PropertyAnimation {
-                            property: "opacity"
-                            from: 0
-                            to: 1
-                            duration: 100
-                        }
-                        PropertyAnimation {
-                            property: "x"
-                            from: -100
-                            to: 0
-                            duration: 100
-                        }
-                    }
-                    popExit: Transition {
-                        PropertyAnimation {
-                            property: "opacity"
-                            from: 1
-                            to: 0
-                            duration: 100
-                        }
-                        PropertyAnimation {
-                            property: "x"
-                            from: 0
-                            to: 100
-                            duration: 100
-                        }
-                    }
                 }
 
                 Component {
                     id: questionView
 
                     Item {
+                        property var viewQuestion: 0
+
                         function getSelectedVariant() {
                             for(var i = 0; i < variants.count; i++) {
                                 var radioButton = variants.itemAt(i);
@@ -265,15 +162,25 @@ ApplicationWindow {
                             return -1;
                         }
 
+                        function getCheckboxesScore() {
+                            var sum = 0
+                            for(var i = 0; i < testpl.tests[test].questions[question].checkboxes.length; i++) {
+                                if(checkboxes.itemAt(i).checked === testpl.tests[test].questions[question].checkboxes[i].need) {
+                                    sum += testpl.tests[test].questions[question].checkboxes[i].score
+                                }
+                            }
+                            return sum
+                        }
+
                         ColumnLayout {
                             anchors.fill: parent
                             anchors.margins: 20
 
                             Image {
-                                source: testpl.tests[test].questions[question].image
+                                source: testpl.tests[test].questions[viewQuestion].image
                                 Layout.maximumWidth: 400
                                 Layout.maximumHeight: 300
-                                Layout.alignment: Qt.AlignCenter
+                                Layout.alignment: Qt.AlignCenter1
                                 fillMode: Image.PreserveAspectFit
                                 mipmap: true
                                 onStatusChanged: {
@@ -283,19 +190,19 @@ ApplicationWindow {
 
                             Label {
                                 Layout.alignment: Qt.AlignCenter
-                                text: testpl.tests[test].questions[question].text
+                                text: testpl.tests[test].questions[viewQuestion].text
                                 enabled: text !== ""
                             }
 
                             Repeater {
-                                model: testpl.tests[test].questions[question].variants
+                                model: testpl.tests[test].questions[viewQuestion].variants
                                 id: variants
 
                                 RadioButton {
                                     Layout.fillWidth: true
                                     text: modelData.text
                                     Material.accent: {
-                                        if(!testpl.tests[test].questions[question].checked) {
+                                        if(!testpl.tests[test].questions[viewQuestion].checked) {
                                             return Material.Purple
                                         }
                                         if(modelData.correct) {
@@ -307,7 +214,7 @@ ApplicationWindow {
                                         return Material.Red
                                     }
                                     Material.foreground: {
-                                        if(!testpl.tests[test].questions[question].checked) {
+                                        if(!testpl.tests[test].questions[viewQuestion].checked) {
                                             return "#ffffff"
                                         }
                                         if(modelData.correct) {
@@ -324,22 +231,22 @@ ApplicationWindow {
                                     // hack to forbid changing answer after it is checked
                                     MouseArea {
                                         anchors.fill: parent
-                                        onPressed: (mouse) => { mouse.accepted = testpl.tests[test].questions[question].checked; }
+                                        onPressed: (mouse) => { mouse.accepted = testpl.tests[test].questions[viewQuestion].checked; }
                                     }
                                     onClicked: checkButton.enabled = true
-                                    hoverEnabled: !testpl.tests[test].questions[question].checked
+                                    hoverEnabled: !testpl.tests[test].questions[viewQuestion].checked
                                 }
                             }
 
                             Repeater {
-                                model: testpl.tests[test].questions[question].checkboxes
+                                model: testpl.tests[test].questions[viewQuestion].checkboxes
                                 id: checkboxes
 
                                 CheckBox {
                                     Layout.fillWidth: true
                                     text: modelData.text
                                     Material.accent: {
-                                        if(!testpl.tests[test].questions[question].checked) {
+                                        if(!testpl.tests[test].questions[viewQuestion].checked) {
                                             return Material.Purple
                                         }
                                         if(modelData.need) {
@@ -348,7 +255,7 @@ ApplicationWindow {
                                         return Material.Red
                                     }
                                     Material.foreground: {
-                                        if(!testpl.tests[test].questions[question].checked) {
+                                        if(!testpl.tests[test].questions[viewQuestion].checked) {
                                             return "#ffffff"
                                         }
                                         if(modelData.need) {
@@ -359,10 +266,10 @@ ApplicationWindow {
                                     // hack to forbid changing answer after it is checked
                                     MouseArea {
                                         anchors.fill: parent
-                                        onPressed: (mouse) => { mouse.accepted = testpl.tests[test].questions[question].checked; }
+                                        onPressed: (mouse) => { mouse.accepted = testpl.tests[test].questions[viewQuestion].checked; }
                                     }
                                     onClicked: checkButton.enabled = true
-                                    hoverEnabled: !testpl.tests[test].questions[question].checked
+                                    hoverEnabled: !testpl.tests[test].questions[viewQuestion].checked
                                 }
                             }
                         }
@@ -379,9 +286,11 @@ ApplicationWindow {
                         if(!testpl.tests[test].questions[question].checked) {
                             if(testpl.tests[test].questions[question].checkboxes.length !== 0) {
                                 correctSound.play()
+                                score += questionStack.currentItem.getCheckboxesScore()
                             } else {
                                 if(testpl.tests[test].questions[question].variants[questionStack.currentItem.getSelectedVariant()].score !== 0) {
                                     correctSound.play()
+                                    score += testpl.tests[test].questions[question].variants[questionStack.currentItem.getSelectedVariant()].score
                                 } else {
                                     wrongSound.play()
                                 }
@@ -393,7 +302,7 @@ ApplicationWindow {
                             } else {
                                 testpl.tests[test].questions[question + 1].checked = false
                                 question += 1
-                                questionStack.replace(questionView)
+                                questionStack.replace(questionView, {viewQuestion: question})
                             }
                         }
                     }
