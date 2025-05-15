@@ -22,3 +22,12 @@ void Question::addScore(int score) {
     scores.push_back(score);
     emit scoresChanged();
 }
+
+void Question::setCorrect(const QString& correct) {
+    this->correct = correct;
+    emit correctChanged();
+    if(textOnly) {
+        textOnly = false;
+        emit textOnlyChanged();
+    }
+}

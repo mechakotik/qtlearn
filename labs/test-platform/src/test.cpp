@@ -65,6 +65,12 @@ void Test::loadFromToml(const toml::value& table, const std::filesystem::path& p
                 q->addScore(static_cast<int>(score.as_integer()));
             }
         }
+        if(question.contains("answer")) {
+            q->setCorrect(QString::fromStdString(question.at("answer").as_string()));
+        }
+        if(question.contains("score")) {
+            q->setProperty("score", static_cast<int>(question.at("score").as_integer()));
+        }
         questions.push_back(q);
     }
 

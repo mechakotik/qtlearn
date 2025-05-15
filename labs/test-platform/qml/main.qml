@@ -172,11 +172,16 @@ ApplicationWindow {
                             return cnt
                         }
 
+                        function getTextInput() {
+                            return input.text
+                        }
+
                         ColumnLayout {
                             anchors.fill: parent
                             anchors.margins: 20
 
                             Image {
+                                Layout.bottomMargin: 10
                                 source: testpl.tests[test].questions[viewQuestion].image
                                 Layout.maximumWidth: 400
                                 Layout.maximumHeight: 300
@@ -189,6 +194,7 @@ ApplicationWindow {
                             }
 
                             Label {
+                                Layout.bottomMargin: 10
                                 Layout.alignment: {
                                     if(testpl.tests[test].questions[viewQuestion].textOnly) {
                                         return Qt.AlignLeft
@@ -200,6 +206,7 @@ ApplicationWindow {
                             }
 
                             Repeater {
+                                Layout.bottomMargin: 10
                                 model: testpl.tests[test].questions[viewQuestion].variants
                                 id: variants
 
@@ -244,6 +251,7 @@ ApplicationWindow {
                             }
 
                             Repeater {
+                                Layout.bottomMargin: 10
                                 model: testpl.tests[test].questions[viewQuestion].checkboxes
                                 id: checkboxes
 
@@ -278,6 +286,29 @@ ApplicationWindow {
                                 }
                             }
 
+                            TextField {
+                                id: input
+                                Layout.bottomMargin: 10
+                                Layout.fillWidth: true
+                                visible: testpl.tests[test].questions[viewQuestion].correct !== ""
+                                Material.foreground: {
+                                    if(!testpl.tests[test].questions[viewQuestion].checked) {
+                                        return "#ffffff"
+                                    }
+                                    if(text === testpl.tests[test].questions[viewQuestion].correct) {
+                                        return "#a5d6a7"
+                                    }
+                                    return "#ef9a9a";
+                                }
+                                // hack to forbid changing answer after it is checked
+                                MouseArea {
+                                    anchors.fill: parent
+                                    onPressed: (mouse) => { mouse.accepted = testpl.tests[test].questions[viewQuestion].checked; }
+                                    cursorShape: Qt.IBeam
+                                }
+                                hoverEnabled: !testpl.tests[test].questions[viewQuestion].checked
+                            }
+
                             Item {
                                 Layout.fillHeight: true
                             }
@@ -301,10 +332,17 @@ ApplicationWindow {
                                 } else {
                                     wrongSound.play()
                                 }
-                            } else {
+                            } else if(testpl.tests[test].questions[question].variants.length !== 0) {
                                 if(testpl.tests[test].questions[question].variants[questionStack.currentItem.getSelectedVariant()].score !== 0) {
                                     correctSound.play()
                                     score += testpl.tests[test].questions[question].variants[questionStack.currentItem.getSelectedVariant()].score
+                                } else {
+                                    wrongSound.play()
+                                }
+                            } else {
+                                if(questionStack.currentItem.getTextInput() === testpl.tests[test].questions[question].correct) {
+                                    correctSound.play()
+                                    score += testpl.tests[test].questions[question].score
                                 } else {
                                     wrongSound.play()
                                 }

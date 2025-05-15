@@ -25,3 +25,8 @@ checkboxes = [
 [[questions]]
 text = "Просто текст без вопроса, типа пояснение"
 
+[[questions]]
+text = "Здесь ответ \"test\", посимвольное сравнение"
+answer = "test"
+score = 10
+
