@@ -151,6 +151,7 @@ ApplicationWindow {
 
                     Item {
                         property int viewQuestion: 0
+                        property bool textInputCorrect: false
 
                         function getSelectedVariant() {
                             for(var i = 0; i < variants.count; i++) {
@@ -309,7 +310,7 @@ ApplicationWindow {
                                     if(!testpl.tests[test].questions[viewQuestion].checked) {
                                         return "#ffffff"
                                     }
-                                    if(text === testpl.tests[test].questions[viewQuestion].correct) {
+                                    if(textInputCorrect) {
                                         return "#a5d6a7"
                                     }
                                     return "#ef9a9a";
@@ -359,17 +360,21 @@ ApplicationWindow {
                                 var add = testpl.tests[test].questions[question].answerScore(questionStack.currentItem.getTextInput())
                                 if(add !== 0) {
                                     correctSound.play()
+                                    questionStack.currentItem.textInputCorrect = true
                                     score += add
                                 } else {
                                     wrongSound.play()
+                                    questionStack.currentItem.textInputCorrect = false
                                 }
                             }
                             else {
                                 if(questionStack.currentItem.getTextInput() === testpl.tests[test].questions[question].correct) {
                                     correctSound.play()
+                                    questionStack.currentItem.textInputCorrect = true
                                     score += testpl.tests[test].questions[question].score
                                 } else {
                                     wrongSound.play()
+                                    questionStack.currentItem.textInputCorrect = false
                                 }
                             }
                             testpl.tests[test].questions[question].checked = true
