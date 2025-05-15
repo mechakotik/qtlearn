@@ -10,6 +10,20 @@ qt_standard_project_setup()
 set(TOML11_PRECOMPILE ON)
 add_subdirectory(external/toml11 EXCLUDE_FROM_ALL)
 
+set(WAMR_BUILD_PLATFORM "linux")
+set(WAMR_BUILD_TARGET "X86_64")
+set(WAMR_BUILD_INTERP 1)
+set(WAMR_BUILD_FAST_INTERP 1)
+set(WAMR_BUILD_AOT 1)
+set(WAMR_BUILD_LIBC_BUILTIN 1)
+set(WAMR_BUILD_LIBC_WASI 1)
+set(WAMR_BUILD_REF_TYPES 1)
+set(WAMR_ROOT_DIR external/wasm-micro-runtime)
+
+include(${WAMR_ROOT_DIR}/build-scripts/runtime_lib.cmake)
+include(${SHARED_DIR}/utils/uncommon/shared_uncommon.cmake)
+add_library(vmlib ${WAMR_RUNTIME_LIB_SOURCE})
+
 qt_add_executable(test-platform
         application.qrc
         src/main.cpp
@@ -20,6 +34,7 @@ qt_add_executable(test-platform
         src/error.cpp
         src/variant.hpp
         src/checkbox.hpp
+        ${UNCOMMON_SHARED_SOURCE}
 )
 
 qt_add_qml_module(test-platform
@@ -33,6 +48,7 @@ target_link_libraries(test-platform PRIVATE
         Qt6::QuickControls2
         Qt6::Multimedia
         toml11::toml11
+        vmlib
 )
 
 target_include_directories(test-platform PRIVATE

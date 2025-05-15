@@ -1,8 +1,10 @@
-#include <QGuiApplication>
+#include <wasm_runtime_common.h>
 #include <QQmlApplicationEngine>
 #include "test_platform.hpp"
 
 int main(int argc, char* argv[]) {
+    wasm_runtime_init();
+
     QGuiApplication app(argc, argv);
     QQmlApplicationEngine engine;
 

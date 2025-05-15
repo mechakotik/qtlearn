@@ -71,6 +71,16 @@ void Test::loadFromToml(const toml::value& table, const std::filesystem::path& p
         if(question.contains("score")) {
             q->setProperty("score", static_cast<int>(question.at("score").as_integer()));
         }
+        if(question.contains("checker")) {
+            if(question.at("checker").contains("path")) {
+                std::filesystem::path checkerPath = path / question.at("checker").at("path").as_string();
+                q->setCheckerPath(checkerPath.c_str());
+            }
+            if(question.at("checker").contains("userdata")) {
+                QString userdata = question.at("checker").at("userdata").as_string().c_str();
+                q->setProperty("checkerUserdata", userdata);
+            }
+        }
         questions.push_back(q);
     }
 

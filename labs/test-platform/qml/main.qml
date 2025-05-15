@@ -176,6 +176,19 @@ ApplicationWindow {
                             return input.text
                         }
 
+                        function inputValid() {
+                            if(testpl.tests[test].questions[viewQuestion].variants.length !== 0) {
+                                return getSelectedVariant() !== -1
+                            }
+                            if(testpl.tests[test].questions[viewQuestion].checkboxes.length !== 0) {
+                                return true
+                            }
+                            if(testpl.tests[test].questions[viewQuestion].checkerPath !== "") {
+                                return testpl.tests[test].questions[viewQuestion].answerValid(input.text)
+                            }
+                            return input.text.length !== 0
+                        }
+
                         ColumnLayout {
                             anchors.fill: parent
                             anchors.margins: 20
@@ -195,12 +208,9 @@ ApplicationWindow {
 
                             Label {
                                 Layout.bottomMargin: 10
-                                Layout.alignment: {
-                                    if(testpl.tests[test].questions[viewQuestion].textOnly) {
-                                        return Qt.AlignLeft
-                                    }
-                                    return Qt.AlignCenter
-                                }
+                                Layout.alignment: Qt.AlignLeft
+                                Layout.fillWidth: true
+                                wrapMode: Text.WordWrap
                                 text: testpl.tests[test].questions[viewQuestion].text
                                 enabled: text !== ""
                             }
@@ -290,7 +300,7 @@ ApplicationWindow {
                                 id: input
                                 Layout.bottomMargin: 10
                                 Layout.fillWidth: true
-                                visible: testpl.tests[test].questions[viewQuestion].correct !== ""
+                                visible: testpl.tests[test].questions[viewQuestion].correct !== "" || testpl.tests[test].questions[viewQuestion].checkerPath !== ""
                                 Material.foreground: {
                                     if(!testpl.tests[test].questions[viewQuestion].checked) {
                                         return "#ffffff"
@@ -321,7 +331,7 @@ ApplicationWindow {
                     Layout.alignment: Qt.AlignRight
                     Layout.preferredWidth: 128
                     text: (testpl.tests[test].questions[question].checked || testpl.tests[test].questions[question].textOnly  ? "ДАЛЕЕ" : "ПРОВЕРИТЬ")
-                    enabled: !testpl.tests[test].questions[question].checkboxes.empty
+                    enabled: questionStack.currentItem.inputValid()
                     onClicked: {
                         if(!testpl.tests[test].questions[question].checked && !testpl.tests[test].questions[question].textOnly) {
                             if(testpl.tests[test].questions[question].checkboxes.length !== 0) {
@@ -339,7 +349,16 @@ ApplicationWindow {
                                 } else {
                                     wrongSound.play()
                                 }
-                            } else {
+                            } else if(testpl.tests[test].questions[question].checkerPath !== "") {
+                                var add = testpl.tests[test].questions[question].answerScore(questionStack.currentItem.getTextInput())
+                                if(add !== 0) {
+                                    correctSound.play()
+                                    score += add
+                                } else {
+                                    wrongSound.play()
+                                }
+                            }
+                            else {
                                 if(questionStack.currentItem.getTextInput() === testpl.tests[test].questions[question].correct) {
                                     correctSound.play()
                                     score += testpl.tests[test].questions[question].score
