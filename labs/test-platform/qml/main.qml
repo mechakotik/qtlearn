@@ -150,7 +150,7 @@ ApplicationWindow {
                     id: questionView
 
                     Item {
-                        property var viewQuestion: 0
+                        property int viewQuestion: 0
 
                         function getSelectedVariant() {
                             for(var i = 0; i < variants.count; i++) {
@@ -176,18 +176,21 @@ ApplicationWindow {
                             return input.text
                         }
 
-                        function inputValid() {
-                            if(testpl.tests[test].questions[viewQuestion].variants.length !== 0) {
-                                return getSelectedVariant() !== -1
+                        function updateInputValid() {
+                            if(testpl.tests[test].questions[viewQuestion].textOnly) {
+                                checkButton.enabled = true
+                            } else if(testpl.tests[test].questions[viewQuestion].variants.length !== 0) {
+                                checkButton.enabled = (getSelectedVariant() !== -1)
+                            } else if(testpl.tests[test].questions[viewQuestion].checkboxes.length !== 0) {
+                                checkButton.enabled = true
+                            } else if(testpl.tests[test].questions[viewQuestion].checkerPath !== "") {
+                                checkButton.enabled = testpl.tests[test].questions[viewQuestion].answerValid(input.text)
+                            } else {
+                                checkButton.enabled = (input.text.length !== 0)
                             }
-                            if(testpl.tests[test].questions[viewQuestion].checkboxes.length !== 0) {
-                                return true
-                            }
-                            if(testpl.tests[test].questions[viewQuestion].checkerPath !== "") {
-                                return testpl.tests[test].questions[viewQuestion].answerValid(input.text)
-                            }
-                            return input.text.length !== 0
                         }
+
+                        Component.onCompleted: updateInputValid()
 
                         ColumnLayout {
                             anchors.fill: parent
@@ -255,7 +258,7 @@ ApplicationWindow {
                                         anchors.fill: parent
                                         onPressed: (mouse) => { mouse.accepted = testpl.tests[test].questions[viewQuestion].checked; }
                                     }
-                                    onClicked: checkButton.enabled = true
+                                    onClicked: updateInputValid()
                                     hoverEnabled: !testpl.tests[test].questions[viewQuestion].checked
                                 }
                             }
@@ -292,6 +295,7 @@ ApplicationWindow {
                                         onPressed: (mouse) => { mouse.accepted = testpl.tests[test].questions[viewQuestion].checked; }
                                     }
                                     onClicked: checkButton.enabled = true
+                                    onCheckedChanged: updateInputValid()
                                     hoverEnabled: !testpl.tests[test].questions[viewQuestion].checked
                                 }
                             }
@@ -316,10 +320,12 @@ ApplicationWindow {
                                     onPressed: (mouse) => { mouse.accepted = testpl.tests[test].questions[viewQuestion].checked; }
                                     cursorShape: Qt.IBeam
                                 }
+                                onTextChanged: updateInputValid()
                                 hoverEnabled: !testpl.tests[test].questions[viewQuestion].checked
                             }
 
                             Item {
+                                Layout.fillWidth: true
                                 Layout.fillHeight: true
                             }
                         }
@@ -331,7 +337,7 @@ ApplicationWindow {
                     Layout.alignment: Qt.AlignRight
                     Layout.preferredWidth: 128
                     text: (testpl.tests[test].questions[question].checked || testpl.tests[test].questions[question].textOnly  ? "ДАЛЕЕ" : "ПРОВЕРИТЬ")
-                    enabled: questionStack.currentItem.inputValid()
+                    enabled: false
                     onClicked: {
                         if(!testpl.tests[test].questions[question].checked && !testpl.tests[test].questions[question].textOnly) {
                             if(testpl.tests[test].questions[question].checkboxes.length !== 0) {
