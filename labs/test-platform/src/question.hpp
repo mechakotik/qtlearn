@@ -14,6 +14,7 @@ class Question : public QObject {
     Q_PROPERTY(QObjectList checkboxes MEMBER checkboxes NOTIFY checkboxesChanged)
     Q_PROPERTY(QList<int> scores MEMBER scores NOTIFY scoresChanged)
     Q_PROPERTY(bool checked MEMBER checked NOTIFY checkedChanged)
+    Q_PROPERTY(bool textOnly MEMBER textOnly NOTIFY textOnlyChanged)
 
 public:
     Question(QObject* parent = nullptr) : QObject(parent) {}
@@ -28,6 +29,7 @@ signals:
     void checkboxesChanged();
     void scoresChanged();
     void checkedChanged();
+    void textOnlyChanged();
 
 private:
     QString text;
@@ -36,6 +38,7 @@ private:
     QObjectList checkboxes;
     QList<int> scores;
     bool checked = false;
+    bool textOnly = true;
 };
 
 #endif // QUESTION_HPP

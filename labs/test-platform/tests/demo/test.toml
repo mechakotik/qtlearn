@@ -22,3 +22,6 @@ checkboxes = [
 	{ text="incorrect", need=false }
 ]
 
+[[questions]]
+text = "Просто текст без вопроса, типа пояснение"
+

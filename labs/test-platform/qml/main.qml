@@ -189,7 +189,12 @@ ApplicationWindow {
                             }
 
                             Label {
-                                Layout.alignment: Qt.AlignCenter
+                                Layout.alignment: {
+                                    if(testpl.tests[test].questions[viewQuestion].textOnly) {
+                                        return Qt.AlignLeft
+                                    }
+                                    return Qt.AlignCenter
+                                }
                                 text: testpl.tests[test].questions[viewQuestion].text
                                 enabled: text !== ""
                             }
@@ -284,10 +289,10 @@ ApplicationWindow {
                     id: checkButton
                     Layout.alignment: Qt.AlignRight
                     Layout.preferredWidth: 128
-                    text: (testpl.tests[test].questions[question].checked ? "ДАЛЕЕ" : "ПРОВЕРИТЬ")
+                    text: (testpl.tests[test].questions[question].checked || testpl.tests[test].questions[question].textOnly  ? "ДАЛЕЕ" : "ПРОВЕРИТЬ")
                     enabled: !testpl.tests[test].questions[question].checkboxes.empty
                     onClicked: {
-                        if(!testpl.tests[test].questions[question].checked) {
+                        if(!testpl.tests[test].questions[question].checked && !testpl.tests[test].questions[question].textOnly) {
                             if(testpl.tests[test].questions[question].checkboxes.length !== 0) {
                                 var cnt = questionStack.currentItem.countWrongCheckboxes()
                                 if(cnt < testpl.tests[test].questions[question].scores.length) {
