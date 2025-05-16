@@ -1,4 +1,5 @@
 #include <ctype.h>
+#include <errno.h>
 #include <math.h>
 #include <stdbool.h>
 #include <stdlib.h>
@@ -16,24 +17,9 @@ int answer_score(const char* answer, const char* userdata) {
 
 __attribute__((export_name("answer_valid")))
 bool answer_valid(const char* answer, const char* userdata) {
-    int n = strlen(answer);
-    if(n == 0) {
-        return false;
-    }
-    
-    bool point = false;
-    for(int i = 0; i < n; i++) {
-        if(isdigit(answer[i])) {
-            continue;
-        }
-        if(answer[i] == '.') {
-            if(point) return false;
-            point = true;
-            continue;
-        }
-        return false;
-    }
-    
-    return answer[n - 1] != '.';
+    char* endptr;
+    errno = 0;
+    long double ans_ld = strtold(answer, &endptr);
+    return errno == 0 && *endptr == '\0';
 }
 
