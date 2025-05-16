@@ -337,7 +337,12 @@ ApplicationWindow {
                     id: checkButton
                     Layout.alignment: Qt.AlignRight
                     Layout.preferredWidth: 128
-                    text: (testpl.tests[test].questions[question].checked || testpl.tests[test].questions[question].textOnly  ? "ДАЛЕЕ" : "ПРОВЕРИТЬ")
+                    text: {
+                        if(testpl.tests[test].questions[question].checked || testpl.tests[test].questions[question].textOnly) {
+                            return (question + 1 === testpl.tests[test].questions.length ? "ЗАВЕРШИТЬ" : "ДАЛЕЕ")
+                        }
+                        return "ПРОВЕРИТЬ"
+                    }
                     enabled: false
                     onClicked: {
                         if(!testpl.tests[test].questions[question].checked && !testpl.tests[test].questions[question].textOnly) {
