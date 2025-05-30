@@ -132,7 +132,9 @@ ApplicationWindow {
                         wrongSound.play()
                     }
                 } else if(testpl.tests[test].questions[question].variants.length !== 0) {
-                    if(testpl.tests[test].questions[question].variants[questionStack.currentItem.getSelectedVariant()].score !== 0) {
+                    if(questionStack.currentItem.getSelectedVariant() === -1) {
+                        wrongSound.play()
+                    } else if(testpl.tests[test].questions[question].variants[questionStack.currentItem.getSelectedVariant()].score !== 0) {
                         correctSound.play()
                         score += testpl.tests[test].questions[question].variants[questionStack.currentItem.getSelectedVariant()].score
                     } else {
@@ -160,6 +162,8 @@ ApplicationWindow {
                     }
                 }
                 testpl.tests[test].questions[question].checked = true
+                checkButton.enabled = true
+                questionStack.currentItem.stopTimer()
             }
 
             ColumnLayout {
@@ -168,9 +172,15 @@ ApplicationWindow {
 
                 RowLayout {
                     Layout.fillWidth: true
-
                     Label {
                         text: "Баллы: " + score
+                    }
+                    Item {
+                        Layout.fillWidth: true
+                    }
+                    Label {
+                        id: timeLabel
+                        Layout.alignment: Qt.AlignRight
                     }
                 }
 
@@ -191,6 +201,7 @@ ApplicationWindow {
 
                     Item {
                         property int viewQuestion: 0
+                        property int secondsLeft: 0
                         property bool textInputCorrect: false
 
                         function getSelectedVariant() {
@@ -231,7 +242,26 @@ ApplicationWindow {
                             }
                         }
 
-                        Component.onCompleted: updateInputValid()
+                        function updateTimeText() {
+                            if(testpl.tests[test].questions[viewQuestion].timeLimit !== 0) {
+                                timeLabel.text = "Осталось: " + secondsLeft + " с."
+                            } else {
+                                timeLabel.text = ""
+                            }
+                        }
+
+                        function stopTimer() {
+                            timer.stop()
+                        }
+
+                        Component.onCompleted: {
+                            updateInputValid()
+                            if(testpl.tests[test].questions[viewQuestion].timeLimit !== 0) {
+                                secondsLeft = testpl.tests[test].questions[viewQuestion].timeLimit
+                                timer.start()
+                            }
+                            updateTimeText()
+                        }
 
                         ColumnLayout {
                             anchors.fill: parent
@@ -363,6 +393,22 @@ ApplicationWindow {
                                 }
                                 onTextChanged: updateInputValid()
                                 hoverEnabled: !testpl.tests[test].questions[viewQuestion].checked
+                            }
+
+                            Timer {
+                                id: timer
+                                repeat: true
+                                onTriggered: {
+                                    secondsLeft--;
+                                    if(secondsLeft === 0) {
+                                        secondsLeft = 0
+                                        timer.stop()
+                                        if(!testpl.tests[test].questions[question].checked && !testpl.tests[test].questions[question].textOnly) {
+                                            checkQuestion()
+                                        }
+                                    }
+                                    updateTimeText()
+                                }
                             }
 
                             Item {

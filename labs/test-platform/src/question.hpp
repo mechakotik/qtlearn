@@ -20,6 +20,7 @@ class Question : public QObject {
     Q_PROPERTY(bool textOnly MEMBER textOnly NOTIFY textOnlyChanged)
     Q_PROPERTY(QString checkerPath MEMBER checkerPath NOTIFY checkerPathChanged)
     Q_PROPERTY(QString checkerUserdata MEMBER checkerUserdata NOTIFY checkerUserdataChanged)
+    Q_PROPERTY(int timeLimit MEMBER timeLimit NOTIFY timeLimitChanged)
 
 public:
     Question(QObject* parent = nullptr) : QObject(parent) {}
@@ -44,6 +45,7 @@ signals:
     void textOnlyChanged();
     void checkerPathChanged();
     void checkerUserdataChanged();
+    void timeLimitChanged();
 
 private:
     void loadChecker();
@@ -56,6 +58,7 @@ private:
 
     QString correct;
     int score = 0;
+    int timeLimit = 0;
 
     bool checked = false;
     bool textOnly = true;

@@ -81,6 +81,10 @@ void Test::loadFromToml(const toml::value& table, const std::filesystem::path& p
                 q->setProperty("checkerUserdata", userdata);
             }
         }
+        if(question.contains("time_limit")) {
+            int tl = question.at("time_limit").as_integer();
+            q->setProperty("timeLimit", tl);
+        }
         questions.push_back(q);
     }
 
