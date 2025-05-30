@@ -122,6 +122,46 @@ ApplicationWindow {
             property var question: 0
             property var score: 0
 
+            function checkQuestion() {
+                if(testpl.tests[test].questions[question].checkboxes.length !== 0) {
+                    var cnt = questionStack.currentItem.countWrongCheckboxes()
+                    if(cnt < testpl.tests[test].questions[question].scores.length) {
+                        correctSound.play()
+                        score += testpl.tests[test].questions[question].scores[cnt]
+                    } else {
+                        wrongSound.play()
+                    }
+                } else if(testpl.tests[test].questions[question].variants.length !== 0) {
+                    if(testpl.tests[test].questions[question].variants[questionStack.currentItem.getSelectedVariant()].score !== 0) {
+                        correctSound.play()
+                        score += testpl.tests[test].questions[question].variants[questionStack.currentItem.getSelectedVariant()].score
+                    } else {
+                        wrongSound.play()
+                    }
+                } else if(testpl.tests[test].questions[question].checkerPath !== "") {
+                    var add = testpl.tests[test].questions[question].answerScore(questionStack.currentItem.getTextInput())
+                    if(add !== 0) {
+                        correctSound.play()
+                        questionStack.currentItem.textInputCorrect = true
+                        score += add
+                    } else {
+                        wrongSound.play()
+                        questionStack.currentItem.textInputCorrect = false
+                    }
+                }
+                else {
+                    if(questionStack.currentItem.getTextInput() === testpl.tests[test].questions[question].correct) {
+                        correctSound.play()
+                        questionStack.currentItem.textInputCorrect = true
+                        score += testpl.tests[test].questions[question].score
+                    } else {
+                        wrongSound.play()
+                        questionStack.currentItem.textInputCorrect = false
+                    }
+                }
+                testpl.tests[test].questions[question].checked = true
+            }
+
             ColumnLayout {
                 anchors.fill: parent
                 anchors.margins: 20
@@ -346,43 +386,7 @@ ApplicationWindow {
                     enabled: false
                     onClicked: {
                         if(!testpl.tests[test].questions[question].checked && !testpl.tests[test].questions[question].textOnly) {
-                            if(testpl.tests[test].questions[question].checkboxes.length !== 0) {
-                                var cnt = questionStack.currentItem.countWrongCheckboxes()
-                                if(cnt < testpl.tests[test].questions[question].scores.length) {
-                                    correctSound.play()
-                                    score += testpl.tests[test].questions[question].scores[cnt]
-                                } else {
-                                    wrongSound.play()
-                                }
-                            } else if(testpl.tests[test].questions[question].variants.length !== 0) {
-                                if(testpl.tests[test].questions[question].variants[questionStack.currentItem.getSelectedVariant()].score !== 0) {
-                                    correctSound.play()
-                                    score += testpl.tests[test].questions[question].variants[questionStack.currentItem.getSelectedVariant()].score
-                                } else {
-                                    wrongSound.play()
-                                }
-                            } else if(testpl.tests[test].questions[question].checkerPath !== "") {
-                                var add = testpl.tests[test].questions[question].answerScore(questionStack.currentItem.getTextInput())
-                                if(add !== 0) {
-                                    correctSound.play()
-                                    questionStack.currentItem.textInputCorrect = true
-                                    score += add
-                                } else {
-                                    wrongSound.play()
-                                    questionStack.currentItem.textInputCorrect = false
-                                }
-                            }
-                            else {
-                                if(questionStack.currentItem.getTextInput() === testpl.tests[test].questions[question].correct) {
-                                    correctSound.play()
-                                    questionStack.currentItem.textInputCorrect = true
-                                    score += testpl.tests[test].questions[question].score
-                                } else {
-                                    wrongSound.play()
-                                    questionStack.currentItem.textInputCorrect = false
-                                }
-                            }
-                            testpl.tests[test].questions[question].checked = true
+                            checkQuestion()
                         } else {
                             if(question + 1 === testpl.tests[test].questions.length) {
                                 stack.pop()
